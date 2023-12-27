@@ -1,4 +1,4 @@
-﻿Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,tenant,Subscription_ID,Approval_Status,SSL_Mode
+﻿Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode
 yuchenmysqlsingle.mysql.database.azure.com,yuchenrg,3306,2,eugenechen@yuchenmysqlsingle,Mindtree123!,MySQL,mysql,8dc94566-ec40-4aad-abe0-739751b9d5b4,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED
 promysqlsingle.mysql.database.azure.com,RG-ALLRegion-Automation-Team,3306,2,sqltestuser@promysqlsingle,Mindtree123!,MySQL,mysql,8dc94566-ec40-4aad-abe0-739751b9d5b4,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED
 pro1eu-single57.mysql.database.azure.com,rg-sql-migration-dev,3306,2,myadmin@pro1eu-single57,Mindtree123!,MySQL,mysql,8dc94566-ec40-4aad-abe0-739751b9d5b4,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED

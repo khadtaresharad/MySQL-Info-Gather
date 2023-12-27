@@ -25,9 +25,9 @@
 •	Customer consent to install ImportExcel PS Module and Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
-•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-mysql_Server_Input_file.xlsx file (Server_List Worksheet)
-•	Incorporated servername in DB_List, Config_Details,AD Admin and Firewall-rule List  CLI commands output in output.xlsx
-•	No column Filter applied when exporting AZURE CLI Commands output to output.xlsx file
+•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-mysql_Server_Input_file.csv file (Server_List Worksheet)
+•	Incorporated servername in DB_List, Config_Details,AD Admin and Firewall-rule List  CLI commands output in output.csv
+•	No column Filter applied when exporting AZURE CLI Commands output to output.csv file
 •	Included az mysql server replica list CLI
 
         
@@ -118,7 +118,7 @@ if((Get-Module -ListAvailable).Name -notcontains "ImportExcel")
 
 
 # Read the input config Excel and validate
-#$inputfile = $PSScriptRoot+"\CMF-mysql_Server_Input_file.xlsx" 
+#$inputfile = $PSScriptRoot+"\CMF-mysql_Server_Input_file.csv" 
 $inputfile = $PSScriptRoot+"\Azure_Subscription.csv"
 Write-Host "Input file is $inputfile " -ForegroundColor Green
 Write-Host "===================================================================="  
@@ -451,17 +451,17 @@ else
       exitcode
       }
       }
-    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName Server_List
-    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName DB_Details
-    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName Configuration_Data
-    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName AD_Admin
-    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName FW_List
-    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName Replica_List
+    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -Path $PSScriptRoot\Output\Server_List.csv 
+    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\DB_Details.csv 
+    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\Configuration_Data.csv 
+    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\AD_Admin.csv
+    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\FW_List.csv 
+    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\Replica_List.csv 
 
 
     Write-Host "=============================================================================================================="  
     Write-Host "Information gathered ==> $folder\Output\Single\ " -ForegroundColor Green -BackgroundColor Black
-    Write-Host "Output file created ==> $PSScriptRoot\Output\Output.xlsx " -ForegroundColor Green -BackgroundColor Black
+    Write-Host "Output file created ==> $PSScriptRoot\Output\Output.csv " -ForegroundColor Green -BackgroundColor Black
     Write-Host "==============================================================================================================" 
   
   
@@ -470,7 +470,7 @@ else
 
     
     if($Outfiledata -ne $null){
-    $Outfiledata | select Host_Name,Resource_Group,Port,VCore,Auth_Type,User_ID,Password,DB_Name,tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-Csv $PSScriptRoot\Server_List.csv
+    $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV $PSScriptRoot\Server_List.csv
     }
     
 }  

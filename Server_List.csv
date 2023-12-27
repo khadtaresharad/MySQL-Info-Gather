@@ -1,7 +1,0 @@
-"Host_Name","Resource_Group","Port","VCore","Auth_Type","User_ID","Password","DB_Name","Tenant","Subscription_ID","Approval_Status","SSL_Mode"
-"yuchenmysqlsingle.mysql.database.azure.com","yuchenrg","5432","2","MySQL","eugenechen@yuchenmysqlsingle","","mysql","MTTech2021outlook.onmicrosoft.com","edf6dd9d-7c4a-4bca-a997-945f3d60cf4e","",
-"promysqlsingle.mysql.database.azure.com","RG-ALLRegion-Automation-Team","5432","2","MySQL","sqltestuser@promysqlsingle","","mysql","MTTech2021outlook.onmicrosoft.com","edf6dd9d-7c4a-4bca-a997-945f3d60cf4e","",
-"pro1eu-single57.mysql.database.azure.com","rg-sql-migration-dev","5432","2","MySQL","myadmin@pro1eu-single57","","mysql","MTTech2021outlook.onmicrosoft.com","edf6dd9d-7c4a-4bca-a997-945f3d60cf4e","",
-"pro1eu-single80.mysql.database.azure.com","rg-sql-migration-dev","5432","2","MySQL","myadmin@pro1eu-single80","","mysql","MTTech2021outlook.onmicrosoft.com","edf6dd9d-7c4a-4bca-a997-945f3d60cf4e","",
-"mysqlsingletest.mysql.database.azure.com","rg-sql-migration-dev","5432","1","MySQL","sqltestuser@mysqlsingletest","","mysql","MTTech2021outlook.onmicrosoft.com","edf6dd9d-7c4a-4bca-a997-945f3d60cf4e","",
-"my-single-server-sharad.mysql.database.azure.com","rg-sql-migration-dev","5432","1","MySQL","sqltestuser@my-single-server-sharad","","mysql","MTTech2021outlook.onmicrosoft.com","edf6dd9d-7c4a-4bca-a997-945f3d60cf4e","",
