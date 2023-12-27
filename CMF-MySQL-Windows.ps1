@@ -185,7 +185,7 @@ exitcode
         ($ColumnList.Contains("User_ID")) -and
         ($ColumnList.Contains("Password")) -and
         ($ColumnList.Contains("DB_Name")) -and
-        ($ColumnList.Contains("tenant")) -and
+        ($ColumnList.Contains("Tenant")) -and
         ($ColumnList.Contains("Subscription_ID")) -and
         ($ColumnList.Contains("SSL_Mode"))){
 
