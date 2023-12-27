@@ -1,5 +1,5 @@
 ﻿#---------------------------------------------------------------------------------------------------------------------------*
-#  Purpose        : Script for Information gathering of Azure MySQL Single Server
+#  Purpose        : Script for Information gathering of Azure PostgreSQL Single Server
 #  Schedule       : Ad-Hoc / On-Demand
 #  Date           : 19-July-2023
 #  Author         : Rackimuthu Kandaswamy , Sireesha , ArunKumar , Saby , Lekshmy MK
@@ -17,7 +17,7 @@
 #---------------------------------------------------------------------------------------------------------------------------*
 #---------------------------------------------------------------------------------------------------------------------------*
 # Usage:
-# Powershell.exe -File ./CMF-Azure-MySQL-Info-gathering.ps1
+# Powershell.exe -File ./CMF-Azure-PostgreSQL-Info-gathering.ps1
 #
 <#
     Change Log
@@ -25,7 +25,7 @@
 •	Customer consent to install ImportExcel PS Module and Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
-•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-MySQL_Server_Input_file.xlsx file (Server_List Worksheet)
+•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-PostgreSQL_Server_Input_file.xlsx file (Server_List Worksheet)
 •	Incorporated servername in DB_List, Config_Details,AD Admin and Firewall-rule List  CLI commands output in output.xlsx
 •	No column Filter applied when exporting AZURE CLI Commands output to output.xlsx file
 •	Included az mysql server replica list CLI
@@ -39,7 +39,7 @@ CLS
 #---------------------------------------------------------PROGRAM BEGINS HERE----------------------------------------------------------
 
 write-host "                                                                            " -BackgroundColor DarkMagenta
-Write-Host "     Welcome to CMF - Azure_MySQL_Info_Gathering_Automation            " -ForegroundColor white -BackgroundColor DarkMagenta
+Write-Host "     Welcome to CMF - Azure_PostgreSQL_Info_Gathering_Automation            " -ForegroundColor white -BackgroundColor DarkMagenta
 write-host "                     (OSS DB Migration Factory)                             " -BackgroundColor DarkMagenta
 write-host "                                                                            " -BackgroundColor DarkMagenta
 Write-Host " "
@@ -47,7 +47,7 @@ Write-Host " "
 $folder = $PSScriptRoot
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
 Write-Host "`n======================================================================================="
-Start-Transcript -path  $folder/Logs/CMF-Azure-MySQL-Info-gathering_$today_date.txt  -Append
+Start-Transcript -path  $folder/Logs/CMF-Azure-PostgreSQL-Info-gathering_$today_date.txt  -Append
 Write-Host "`n======================================================================================="
 
 function exitCode
@@ -118,7 +118,7 @@ createFolder $folder/Output/Single/
 
 
 # Read the input config Excel and validate
-#$inputfile = $PSScriptRoot+"/CMF-MySQL_Server_Input_file.xlsx" 
+#$inputfile = $PSScriptRoot+"/CMF-PostgreSQL_Server_Input_file.xlsx" 
 $inputfile = $PSScriptRoot+"/Azure_Subscription.csv"
 Write-Host "Input file is $inputfile " -ForegroundColor Green
 Write-Host "===================================================================="  
@@ -146,7 +146,7 @@ else
          Write-Host "=================================================================================="  
          Write-Host "The file [$inputfile] does not have the woksheet named Azure_Subscription "  -BackgroundColor Red 
          Write-Host "=================================================================================="  
-         Write-Host "Please see the error below & Azure MySQL Info-Gathering has been stopped          "  
+         Write-Host "Please see the error below & Azure PostgreSQL Info-Gathering has been stopped          "  
          throw $_.Exception.Message
          exitcode
         }
@@ -364,7 +364,7 @@ else
       $Logon_User=$Single_User_Name + "@" + $ser_dom
       $vcore=$i.sku.capacity
 
-      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="5432";VCore=$vcore;Auth_Type="MySQL";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status=""}
+      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="5432";VCore=$vcore;Auth_Type="PostgreSQL";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status=""}
           
     try
     {    
