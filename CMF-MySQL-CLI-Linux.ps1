@@ -1,5 +1,5 @@
 ﻿#---------------------------------------------------------------------------------------------------------------------------*
-#  Purpose        : Script for Information gathering of Azure mysql Single Server
+#  Purpose        : Script for Information gathering of Azure PostgreSQL Single Server
 #  Schedule       : Ad-Hoc / On-Demand
 #  Date           : 19-July-2023
 #  Author         : Rackimuthu Kandaswamy , Sireesha , ArunKumar , Saby , Lekshmy MK
@@ -17,7 +17,7 @@
 #---------------------------------------------------------------------------------------------------------------------------*
 #---------------------------------------------------------------------------------------------------------------------------*
 # Usage:
-# Powershell.exe -File .\CMF-Azure-mysql-Info-gathering.ps1
+# Powershell.exe -File ./CMF-Azure-PostgreSQL-Info-gathering.ps1
 #
 <#
     Change Log
@@ -25,10 +25,10 @@
 •	Customer consent to install ImportExcel PS Module and Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
-•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-mysql_Server_Input_file.xlsx file (Server_List Worksheet)
+•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-PostgreSQL_Server_Input_file.xlsx file (Server_List Worksheet)
 •	Incorporated servername in DB_List, Config_Details,AD Admin and Firewall-rule List  CLI commands output in output.xlsx
 •	No column Filter applied when exporting AZURE CLI Commands output to output.xlsx file
-•	Included az mysql server replica list CLI
+•	Included az postgres server replica list CLI
 
         
 #>
@@ -39,7 +39,7 @@ CLS
 #---------------------------------------------------------PROGRAM BEGINS HERE----------------------------------------------------------
 
 write-host "                                                                            " -BackgroundColor DarkMagenta
-Write-Host "     Welcome to CMF - Azure_mysql_Info_Gathering_Automation            " -ForegroundColor white -BackgroundColor DarkMagenta
+Write-Host "     Welcome to CMF - Azure_PostgreSQL_Info_Gathering_Automation            " -ForegroundColor white -BackgroundColor DarkMagenta
 write-host "                     (OSS DB Migration Factory)                             " -BackgroundColor DarkMagenta
 write-host "                                                                            " -BackgroundColor DarkMagenta
 Write-Host " "
@@ -47,7 +47,7 @@ Write-Host " "
 $folder = $PSScriptRoot
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
 Write-Host "`n======================================================================================="
-Start-Transcript -path  $folder\Logs\CMF-Azure-mysql-Info-gathering_$today_date.txt  -Append
+Start-Transcript -path  $folder/Logs/CMF-Azure-PostgreSQL-Info-gathering_$today_date.txt  -Append
 Write-Host "`n======================================================================================="
 
 function exitCode
@@ -72,54 +72,54 @@ function createFolder([string]$newFolder)
 
 
 
-createFolder $folder\Downloads\
-createFolder $folder\Logs\
-createFolder $folder\Output\
-createFolder $folder\Output\Single\
+createFolder $folder/Downloads/
+createFolder $folder/Logs/
+createFolder $folder/Output/
+createFolder $folder/Output/Single/
 
 
 #Check for ImportExcel module
-Write-Host "======================================================================================="
-Write-Host "`nChecking for ImportExcel Module"
-if((Get-Module -ListAvailable).Name -notcontains "ImportExcel")
-{
-    Write-Host "Excel PS module not found.."  -BackgroundColor Red
-    Write-Host "=======================================================================================" 
-    $response = read-host "Do you want to continue download and install Excel PS Module? 'Y' or 'N' : "
-
-    if($response.ToUpper() -eq "Y")
-    {
-    Write-Host "Downloading ImportExcel PS Module..."
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-    try { Install-Module -Name ImportExcel} 
-            catch {
-
-               Write-Host "======================================================================================="  
-               Write-Host "Error while downloading Importexcel package , Please make sure computer is connected to internet "  -ForegroundColor Red  
-               Write-Host "Or "  -ForegroundColor Red 
-               Write-Host "Please install it manually "  -ForegroundColor Red   
-               Write-Host "======================================================================================="  
-               Write-Host "Please see the error below & execution has been stopped          " 
-            throw  $_.Exception.Response.StatusCode.Value__
-            }
-    
-    Write-Host "Downloaded."
-    }
-    else
-    {
-        Write-Host "Excel PS module is required for the execution. Exiting..."
-        exitCode
-    }
-    <#Expand-Archive "$folder\Downloads\ImportExcel.zip" "$folder\Downloads\"
-    move "$folder\Downloads\ImportExcel-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\ImportExcel"
-    Import-Module ImportExcel#>
-}
+#Write-Host "======================================================================================="
+#Write-Host "`nChecking for ImportExcel Module"
+#if((Get-Module -ListAvailable).Name -notcontains "ImportExcel")
+#{
+#    Write-Host "Excel PS module not found.."  -BackgroundColor Red
+#    Write-Host "=======================================================================================" 
+#    $response = read-host "Do you want to continue download and install Excel PS Module? 'Y' or 'N' : "
+#
+#    if($response.ToUpper() -eq "Y")
+#    {
+#    Write-Host "Downloading ImportExcel PS Module..."
+#    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+#    try { Install-Module -Name ImportExcel} 
+#            catch {
+#
+#               Write-Host "======================================================================================="  
+#               Write-Host "Error while downloading Importexcel package , Please make sure computer is connected to internet "  -ForegroundColor Red  
+#               Write-Host "Or "  -ForegroundColor Red 
+#               Write-Host "Please install it manually "  -ForegroundColor Red   
+#               Write-Host "======================================================================================="  
+#               Write-Host "Please see the error below & execution has been stopped          " 
+#            throw  $_.Exception.Response.StatusCode.Value__
+#            }
+#    
+#    Write-Host "Downloaded."
+#    }
+#    else
+#    {
+#        Write-Host "Excel PS module is required for the execution. Exiting..."
+#        exitCode
+#    }
+#    <#Expand-Archive "$folder/Downloads/ImportExcel.zip" "$folder/Downloads/"
+#    move "$folder/Downloads/ImportExcel-7.8.0" "C:/Program Files/WindowsPowerShell/Modules/ImportExcel"
+#    Import-Module ImportExcel#>
+#}
 
 
 # Read the input config Excel and validate
-#$inputfile = $PSScriptRoot+"\CMF-mysql_Server_Input_file.xlsx" 
-$inputfile = $PSScriptRoot+"\Azure_Subscription.csv"
+#$inputfile = $PSScriptRoot+"/CMF-PostgreSQL_Server_Input_file.xlsx" 
+$inputfile = $PSScriptRoot+"/Azure_Subscription.csv"
 Write-Host "Input file is $inputfile " -ForegroundColor Green
 Write-Host "===================================================================="  
 
@@ -146,7 +146,7 @@ else
          Write-Host "=================================================================================="  
          Write-Host "The file [$inputfile] does not have the woksheet named Azure_Subscription "  -BackgroundColor Red 
          Write-Host "=================================================================================="  
-         Write-Host "Please see the error below & Azure mysql Info-Gathering has been stopped          "  
+         Write-Host "Please see the error below & Azure PostgreSQL Info-Gathering has been stopped          "  
          throw $_.Exception.Message
          exitcode
         }
@@ -157,9 +157,9 @@ else
      if (($ColumnList.Contains("Tenant")) -and
         ($ColumnList.Contains("Subscription_ID"))){
 
-        Write-Host "Excel validation is done successfully " 
+        Write-Host "CSV validation is done successfully " 
         }
-     else {Write-Host "There are mismatches in the Excel column . Kindly check and retrigger the automation "  -BackgroundColor Red
+     else {Write-Host "There are mismatches in the CSV column . Kindly check and retrigger the automation "  -BackgroundColor Red
            exitCode}
 
 $tenant=$ConfigList[0].'Tenant'
@@ -334,11 +334,11 @@ else
     az account set --subscription $Subscription
      
     #Server list fetch for Single Server
-    $Single_list_Out = az mysql server list | Out-File $folder\Output\Single\Single_Server_List.json 
+    $Single_list_Out = az postgres server list | Out-File $folder/Output/Single/Single_Server_List.json 
     
-    $ser_details = az mysql server list|ConvertFrom-Json
+    $ser_details = az postgres server list|ConvertFrom-Json
       
-    $ser_list = az mysql server list |ConvertFrom-Json | ConvertTo-HashTable
+    $ser_list = az postgres server list |ConvertFrom-Json | ConvertTo-HashTable
     if($ser_list -is [Hashtable])
     {
         CMF-Read-Hashtable $ser_list
@@ -356,7 +356,7 @@ else
       #Updating input file with server details
       $ServerName= $i.name
       $Single_User_Name = $i.administratorLogin
-      #createFolder $folder\Output\Single\$ServerName\
+      #createFolder $folder/Output/Single/$ServerName/
       $ser_rg = $i.resourceGroup  
       $domain_name = $i.fullyQualifiedDomainName
       $dom = $domain_name.Split(".")
@@ -364,14 +364,14 @@ else
       $Logon_User=$Single_User_Name + "@" + $ser_dom
       $vcore=$i.sku.capacity
 
-      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="5432";VCore=$vcore;Auth_Type="mysql";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status=""}
+      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="5432";VCore=$vcore;Auth_Type="PostgreSQL";User_ID=$Logon_User;Password="";DB_Name="postgres";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status=""}
           
     try
     {    
     #DB List
     
-    #$db_list = az mysql db list -g $ser_rg -s $ser_dom  | Out-File $folder\Output\Single\$ServerName\${ServerName}_Single_DB_List.json               
-    $dbdata = az mysql db list -g $ser_rg -s $ser_dom | ConvertFrom-Json | ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
+    #$db_list = az postgres db list -g $ser_rg -s $ser_dom  | Out-File $folder/Output/Single/$ServerName/${ServerName}_Single_DB_List.json               
+    $dbdata = az postgres db list -g $ser_rg -s $ser_dom | ConvertFrom-Json | ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     $db_data= $dbdata  |ConvertFrom-Json |  ConvertTo-HashTable
     if($db_data -is [Hashtable])
     {
@@ -385,8 +385,8 @@ else
 
     #Server Configuration
     
-    #$conf_list = az mysql server configuration list -g $ser_rg --server-name $ser_dom | Out-File $folder\Output\Single\$ServerName\${ServerName}_Single_Server_Configuration.json
-    $confdata = az mysql server configuration list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
+    #$conf_list = az postgres server configuration list -g $ser_rg --server-name $ser_dom | Out-File $folder/Output/Single/$ServerName/${ServerName}_Single_Server_Configuration.json
+    $confdata = az postgres server configuration list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     $confdata = $confdata|ConvertFrom-Json | ConvertTo-HashTable
     if($confdata -is [Hashtable])
     {
@@ -401,8 +401,8 @@ else
 
     #AD Admin
     
-    #$ad_admin = az mysql server ad-admin list -g $ser_rg -s $ser_dom | Out-File $folder\Output\Single\$ServerName\${ServerName}_Single_AD_Admin_List.json
-    $ADAdmin=az mysql server ad-admin list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
+    #$ad_admin = az postgres server ad-admin list -g $ser_rg -s $ser_dom | Out-File $folder/Output/Single/$ServerName/${ServerName}_Single_AD_Admin_List.json
+    $ADAdmin=az postgres server ad-admin list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     $ADAdmin = $ADAdmin|ConvertFrom-Json | ConvertTo-HashTable
     if($ADAdmin -is [Hashtable])
     {
@@ -417,8 +417,8 @@ else
     
     #Firewall Rule
     
-    #$FW_list = az mysql server firewall-rule list -g $ser_rg -s $ser_dom | Out-File $folder\Output\Single\$ServerName\${ServerName}_Single_FW_Rule.json
-    $FWList=az mysql server firewall-rule list -g $ser_rg -s $ser_dom| ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
+    #$FW_list = az postgres server firewall-rule list -g $ser_rg -s $ser_dom | Out-File $folder/Output/Single/$ServerName/${ServerName}_Single_FW_Rule.json
+    $FWList=az postgres server firewall-rule list -g $ser_rg -s $ser_dom| ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     $FWList = $FWList|ConvertFrom-Json | ConvertTo-HashTable
     if($FWList -is [Hashtable])
     {
@@ -432,7 +432,7 @@ else
 
     #Replica List
     
-    $Replica_List=az mysql server replica list -g $ser_rg -s $ser_dom|ConvertFrom-Json| ConvertTo-HashTable
+    $Replica_List=az postgres server replica list -g $ser_rg -s $ser_dom|ConvertFrom-Json| ConvertTo-HashTable
     if($Replica_List -is [Hashtable])
     {
         CMF-Read-Hashtable $Replica_List
@@ -451,17 +451,17 @@ else
       exitcode
       }
       }
-    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName Server_List
-    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName DB_Details
-    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName Configuration_Data
-    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName AD_Admin
-    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName FW_List
-    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-Excel -Path $PSScriptRoot\Output\Output.xlsx -WorksheetName Replica_List
+    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -Path $PSScriptRoot/Output/Server_List.csv 
+    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/DB_Details.csv
+    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/Configuration_Data.csv
+    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/AD_Admin.csv
+    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/FW_List.csv
+    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/Replica_List.csv
 
 
     Write-Host "=============================================================================================================="  
-    Write-Host "Information gathered ==> $folder\Output\Single\ " -ForegroundColor Green -BackgroundColor Black
-    Write-Host "Output file created ==> $PSScriptRoot\Output\Output.xlsx " -ForegroundColor Green -BackgroundColor Black
+    Write-Host "Information gathered ==> $folder/Output/Single/ " -ForegroundColor Green -BackgroundColor Black
+    Write-Host "Output file created ==> $PSScriptRoot/Output/Output.xlsx " -ForegroundColor Green -BackgroundColor Black
     Write-Host "==============================================================================================================" 
   
   
@@ -470,7 +470,7 @@ else
 
     
     if($Outfiledata -ne $null){
-    $Outfiledata | select Host_Name,Resource_Group,Port,VCore,Auth_Type,User_ID,Password,DB_Name,tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-Csv $PSScriptRoot\Server_List.csv
+    $Outfiledata | select Host_Name,Resource_Group,Port,VCore,Auth_Type,User_ID,Password,DB_Name,tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-Csv $PSScriptRoot/Server_List.csv
     }
     
 }  
