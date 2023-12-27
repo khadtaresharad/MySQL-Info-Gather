@@ -1,17 +1,32 @@
--- SET @dbname = 'singledb';
---  SELECT CONCAT("-- Info gathered for ",@dbname, " Please change this DB name appropriately ") db_name;
--- SELECT ' -- Status Info -- ';
--- SELECT ' ';
--- SHOW STATUS;
-SELECT VERSION();
-SELECT ' -- Variable Info -- ';
-SELECT ' ';
-SHOW VARIABLES;
+/*
 
-SELECT ' -- InnoDB Info -- ';
-SELECT ' ';
+This script gathers the following details and NO user database data is accessed:
+1.      SERVER VERSION INFO
+2.      SERVER PARAMETERS INFO TO LOAD
+3.      SERVER INNODB INFO 
+4.      ROLE-USER-PRIVILEGES DETAILS INFO
+5.      AAD-USER DETAILS INFO
+
+Note: This data is used only for supporting Azure migration/related activities.
+
+Usage: psql -q -U pguser -h servername -d databasename -f pg_db_gather_v0.3.sql > output.log
+
+*/
+
+Select 'SERVER INNODB INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 SET @SCH = IF(VERSION()<'5.7','information_schema','performance_schema');
 
+Select 'SERVER VERSION INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+SELECT VERSION();
+Select 'SERVER VERSION INFO END' as "Query_Description",CURRENT_TIMESTAMP;
+
+Select 'SERVER PARAMETERS INFO TO LOAD BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+SET @SQLSTMT=CONCAT("SELECT variable_name,variable_value FROM ",@SCH,".global_variables order by 1");
+PREPARE s FROM @SQLSTMT; EXECUTE s ; DEALLOCATE PREPARE s;
+Select 'SERVER PARAMETERS INFO TO LOAD END' as "Query_Description",CURRENT_TIMESTAMP;
+
+
+Select 'SERVER INNODB INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 SET @SQLSTMT=CONCAT("SELECT variable_value INTO @SERVER_COLLATION        FROM ",@SCH,".global_variables WHERE variable_name='collation_server'");
 PREPARE s FROM @SQLSTMT; EXECUTE s ; DEALLOCATE PREPARE s;
 
@@ -73,16 +88,15 @@ UNION SELECT 'Percentage Free'                ,LPAD(CONCAT(FORMAT(@IBP_PCT_FREE,
 UNION SELECT 'Percentage Misc'                ,LPAD(CONCAT(FORMAT(@IBP_PCT_MISC,2),' %'),@padding,' ')
 UNION SELECT 'Percentage Used'                ,LPAD(CONCAT(FORMAT(@IBP_PCT_FULL,2),' %'),@padding,' ')
 ;
+Select 'SERVER INNODB INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
-SELECT ' -- Database Size Info -- ';
-SELECT ' ';
+Select 'DATABASE SIZE INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 SELECT table_schema as database_name, SUM(data_length + index_length)/1024/1024 AS total_mb, SUM(data_length)/1024/1024 AS data_mb, SUM(index_length)/1024/1024 AS index_mb, COUNT(*) AS tables, CURDATE() AS today 
 FROM information_schema.tables 
 GROUP BY table_schema ORDER BY 2 DESC ;
+Select 'DATABASE SIZE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
-
-SELECT ' -- Data and Index Info -- ';
-SELECT ' ';
+Select 'DATA AND INDEX INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 select table_schema as database_name,
        table_name,
        round(1.0*data_length/1024/1024, 2) as data_size,
@@ -93,9 +107,9 @@ where table_schema not in('information_schema', 'mysql',
                           'sys', 'performance_schema')
  --     and table_schema = @dbname
 order by database_name,total_size desc;
+Select 'DATA AND INDEX INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
-SELECT ' -- Reference Key Info -- ';
-SELECT ' ';
+Select 'REFERENCE KEY INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 select concat(fks.constraint_schema, '.', fks.table_name) as foreign_table,
        '->' as rel,
        concat(fks.unique_constraint_schema, '.', fks.referenced_table_name)
@@ -119,10 +133,9 @@ group by fks.constraint_schema,
          fks.constraint_name
 order by fks.constraint_schema,
          fks.table_name;
+Select 'REFERENCE KEY INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
-
-SELECT ' -- Top 10 tables size wise Info -- ';
-SELECT ' ';
+Select 'TOP 10 TABLES SIZE INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 SELECT CONCAT(table_schema, '.', table_name) table_name,
         CONCAT(ROUND(table_rows / 1000000, 2), 'M')                                    total_rows,
         CONCAT(ROUND(data_length / ( 1024 * 1024 * 1024 ), 2), 'G')                    DATA,
@@ -135,5 +148,12 @@ SELECT CONCAT(table_schema, '.', table_name) table_name,
                           'sys', 'performance_schema')
  ORDER  BY data_length + index_length DESC
  LIMIT  10 ;
+Select 'TOP 10 TABLES SIZE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
+Select 'SERVER PLUGIN INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME LIKE '%pam%’;
+Select 'SERVER PLUGIN INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
+Select 'TABLE INVISIBLE COLUMN INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+SELECT TABLE_NAME, COLUMN_NAME, EXTRA FROM INFORMATION_SCHEMA.COLUMNS WHERE EXTRA = 'INVISIBLE';
+Select 'TABLE INVISIBLE COLUMN INFO END' as "Query_Description",CURRENT_TIMESTAMP;
