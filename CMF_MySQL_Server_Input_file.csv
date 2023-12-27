@@ -1,7 +1,0 @@
-﻿Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode
-yuchenmysqlsingle.mysql.database.azure.com,yuchenrg,3306,2,eugenechen@yuchenmysqlsingle,Mindtree123!,mysql,mysql,MTTech2021outlook.onmicrosoft.com,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,yes,PREFERRED
-promysqlsingle.mysql.database.azure.com,RG-ALLRegion-Automation-Team,3306,2,sqltestuser@promysqlsingle,,mysql,mysql,MTTech2021outlook.onmicrosoft.com,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED
-pro1eu-single57.mysql.database.azure.com,rg-sql-migration-dev,3306,2,myadmin@pro1eu-single57,,mysql,mysql,MTTech2021outlook.onmicrosoft.com,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED
-pro1eu-single80.mysql.database.azure.com,rg-sql-migration-dev,3306,2,myadmin@pro1eu-single80,,mysql,mysql,MTTech2021outlook.onmicrosoft.com,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED
-mysqlsingletest.mysql.database.azure.com,rg-sql-migration-dev,3306,1,sqltestuser@mysqlsingletest,,mysql,mysql,MTTech2021outlook.onmicrosoft.com,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,no,PREFERRED
-my-single-server-sharad.mysql.database.azure.com,rg-sql-migration-dev,3306,1,sqltestuser@my-single-server-sharad,Mindtree123!,mysql,mysql,MTTech2021outlook.onmicrosoft.com,edf6dd9d-7c4a-4bca-a997-945f3d60cf4e,yes,PREFERRED

@@ -364,7 +364,7 @@ else
       $Logon_User=$Single_User_Name + "@" + $ser_dom
       $vcore=$i.sku.capacity
 
-      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="5432";VCore=$vcore;Auth_Type="PostgreSQL";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status=""}
+      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="3306";VCore=$vcore;Auth_Type="PostgreSQL";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status=""}
           
     try
     {    
