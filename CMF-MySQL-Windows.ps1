@@ -266,7 +266,7 @@ foreach ($row_Content in $ConfigList) {
     $Log_Name= $Host_Name.replace(".", "_")
     $Log_Name=$Log_Name+"_"+$date
     $DbGather_Path="$Folder\\MySQL_Templates\\dbgather.sql"
-    $Log_File="$Folder\Output\$Log_Name.log"
+    $Log_File=$Folder+"\Output\"+$Global:project_name+"_"+$Host_name+"_"+$DB_Name+".log"
 
 
     ##Execute MySQL command 
@@ -277,24 +277,34 @@ foreach ($row_Content in $ConfigList) {
     #$mysqlCommand = "mysql -h %$Host_Name% --ssl-mode=%$SSL% -u %$User_ID% %%x < %%x_%dt_ts%.sql"
     #$mysqlCommand="mysql -u $User_ID -h $Host_Name -P $Port -p $Password -D $DB_Name --ssl-mode=$SSL < $DbGather_path > $Log_File"
     $mysqlCommand="mysql -u $User_ID -h $Host_Name -p$Password -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
-    Write-host $mysqlCommand
+    #Write-host $mysqlCommand
     Invoke-Expression "$mysqlCommand 2>&1 | Out-File -FilePath $Log_File"
+    $stat = $LASTEXITCODE
+    Write-Output "Last operation status: $stat"
+    If( $stat -ne 0)
+    {
+       # seems to have failed
+       Write-Host "Failed to run MySQL database info gather Query" -ForegroundColor RED
+       $errorMessage = $Error[0].Exception.Message
+       #$errorMessage | Out-File -FilePath $errpsql_Log_File -Append
+       #$error_m=Get-content -path $errpsql_Log_File | out-string
+       #continue
+    }
 
 if (Test-Path $Log_File) {
-    $size = (Get-Item $Log_File).Length
-    if($size -gt 1000) {
+    $size = Get-Content -Path $Log_File -Raw
+    if($size -match "VERSION") {
         Write-host "Information Gathered is stored at "$Log_File
         Write-host "Info-Gathering Successfully  completed for " $Host_Name -ForegroundColor Green
-    
         $Output_data += New-Object psobject -Property @{Host_Name=$Host_Name;Status="SUCCESS";LOG_File_Location=$Log_File;Error_msg="NA"}
 
     }
     else{
-    
         $error_msg=Get-content -path $Log_File | Out-String
         $Output_data += New-Object psobject -Property @{Host_Name=$Host_Name;Status="FAILED";LOG_File_Location=$Log_File;Error_Msg=$error_msg}
-        write-host $error_msg -ForegroundColor red  
-    	
+        Write-Host "*** Loop if Failed to" -ForegroundColor RED
+        Write-Host "Failed to run MySQL server" -ForegroundColor RED
+        write-host $error_msg -ForegroundColor red    	
     }
 }
 else {
