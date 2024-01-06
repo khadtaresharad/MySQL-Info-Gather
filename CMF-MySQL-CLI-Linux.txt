@@ -457,12 +457,6 @@ else
     $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/FW_List.csv
     $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot/Output/Replica_List.csv
 
-    # Specify the path to the new CSV file
-    $originalCsvFilePath = "$PSScriptRoot/Output/Server_List.csv"
-    $newCsvFilePath = "$PSScriptRoot/CMF_MySQL_Server_Input_file.csv"
-    $content = Get-Content -Path $originalCsvFilePath | Select-Object -Skip 1
-    $content | Set-Content -Path $newCsvFilePath
-
     Write-Host "=============================================================================================================="  
     Write-Host "Information gathered ==> $folder/Output/Single/ " -ForegroundColor Green -BackgroundColor Black
     Write-Host "Output file created ==> $PSScriptRoot/Output/Output.xlsx " -ForegroundColor Green -BackgroundColor Black
@@ -470,6 +464,10 @@ else
     
     if($Outfiledata -ne $null){
     $Outfiledata | select Host_Name,Resource_Group,Port,VCore,Auth_Type,User_ID,Password,DB_Name,tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-Csv $PSScriptRoot/Server_List.csv
+    $originalCsvFilePath = "$PSScriptRoot/Server_List.csv"
+    $newCsvFilePath = "$PSScriptRoot/CMF_MySQL_Server_Input_file.csv"
+    $content = Get-Content -Path $originalCsvFilePath | Select-Object -Skip 1
+    $content | Set-Content -Path $newCsvFilePath
     }
     
 }  
