@@ -459,7 +459,7 @@ else
 
 
     # Specify the path to the new CSV file
-    $originalCsvFilePath = "$PSScriptRoot\Server_List.csv"
+    $originalCsvFilePath = "$PSScriptRoot\Output\Server_List.csv"
     $newCsvFilePath = "$PSScriptRoot\CMF_MySQL_Server_Input_file.csv"
     $content = Get-Content -Path $originalCsvFilePath | Select-Object -Skip 1
     $content | Set-Content -Path $newCsvFilePath
