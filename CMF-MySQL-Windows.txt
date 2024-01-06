@@ -283,7 +283,6 @@ foreach ($row_Content in $ConfigList) {
     If( $stat -ne 0)
     {
        # seems to have failed
-       Write-Host "Failed to run MySQL database info gather Query" -ForegroundColor RED
        $errorMessage = $Error[0].Exception.Message
        #$errorMessage | Out-File -FilePath $errpsql_Log_File -Append
        #$error_m=Get-content -path $errpsql_Log_File | out-string
