@@ -22,7 +22,7 @@
 <#
     Change Log
     ----------
-•	Customer consent to install ImportExcel PS Module and Azure CLI
+•	Customer consent to install ImportCSV PS Module and Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
 •	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-MySQL_Server_Input_file.csv file (Server_List csv)
@@ -78,21 +78,21 @@ createFolder $folder\Output\
 createFolder $folder\Output\Single\
 
 
-#Check for ImportExcel module
+#Check for ImportCSV module
 Write-Host "======================================================================================="
-Write-Host "`nChecking for ImportExcel Module"
-if((Get-Module -ListAvailable).Name -notcontains "ImportExcel")
+Write-Host "`nChecking for ImportCSV Module"
+if((Get-Module -ListAvailable).Name -notcontains "ImportCsv")
 {
-    Write-Host "Excel PS module not found.."  -BackgroundColor Red
+    Write-Host "Csv PS module not found.."  -BackgroundColor Red
     Write-Host "=======================================================================================" 
-    $response = read-host "Do you want to continue download and install Excel PS Module? 'Y' or 'N' : "
+    $response = read-host "Do you want to continue download and install Csv PS Module? 'Y' or 'N' : "
 
     if($response.ToUpper() -eq "Y")
     {
-    Write-Host "Downloading ImportExcel PS Module..."
+    Write-Host "Downloading ImportCsv PS Module..."
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-    try { Install-Module -Name ImportExcel} 
+    try { Install-Module -Name ImportCsv} 
             catch {
 
                Write-Host "======================================================================================="  
@@ -108,16 +108,16 @@ if((Get-Module -ListAvailable).Name -notcontains "ImportExcel")
     }
     else
     {
-        Write-Host "Excel PS module is required for the execution. Exiting..."
+        Write-Host "Csv PS module is required for the execution. Exiting..."
         exitCode
     }
-    <#Expand-Archive "$folder\Downloads\ImportExcel.zip" "$folder\Downloads\"
-    move "$folder\Downloads\ImportExcel-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\ImportExcel"
-    Import-Module ImportExcel#>
+    <#Expand-Archive "$folder\Downloads\ImportCsv.zip" "$folder\Downloads\"
+    move "$folder\Downloads\ImportCsv-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\ImportCsv"
+    Import-Module ImportCsv#>
 }
 
 
-# Read the input config Excel and validate
+# Read the input config Csv and validate
 $inputfile = $PSScriptRoot+"\Azure_Subscription.csv"
 Write-Host "Input file is $inputfile " -ForegroundColor Green
 Write-Host "===================================================================="  
@@ -156,9 +156,9 @@ else
      if (($ColumnList.Contains("Tenant")) -and
         ($ColumnList.Contains("Subscription_ID"))){
 
-        Write-Host "Excel validation is done successfully " 
+        Write-Host "Csv validation is done successfully " 
         }
-     else {Write-Host "There are mismatches in the Excel column . Kindly check and retrigger the automation "  -BackgroundColor Red
+     else {Write-Host "There are mismatches in the Csv column . Kindly check and retrigger the automation "  -BackgroundColor Red
            exitCode}
 
 $tenant=$ConfigList[0].'Tenant'
