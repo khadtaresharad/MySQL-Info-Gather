@@ -79,42 +79,42 @@ createFolder $folder\Output\Single\
 
 
 #Check for Import-Csv module
-Write-Host "======================================================================================="
-Write-Host "`nChecking for Import-Csv Module"
-if((Get-Module -ListAvailable).Name -notcontains "Import-Csv")
-{
-    Write-Host "Csv PS module not found.."  -BackgroundColor Red
-    Write-Host "=======================================================================================" 
-    $response = read-host "Do you want to continue download and install Csv PS Module? 'Y' or 'N' : "
-
-    if($response.ToUpper() -eq "Y")
-    {
-    Write-Host "Downloading Import-Csv PS Module..."
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-    try { Install-Module -Name Import-Csv} 
-            catch {
-
-               Write-Host "======================================================================================="  
-               Write-Host "Error while downloading Importexcel package , Please make sure computer is connected to internet "  -ForegroundColor Red  
-               Write-Host "Or "  -ForegroundColor Red 
-               Write-Host "Please install it manually "  -ForegroundColor Red   
-               Write-Host "======================================================================================="  
-               Write-Host "Please see the error below & execution has been stopped          " 
-            throw  $_.Exception.Response.StatusCode.Value__
-            }
-    
-    Write-Host "Downloaded."
-    }
-    else
-    {
-        Write-Host "Csv PS module is required for the execution. Exiting..."
-        exitCode
-    }
-    <#Expand-Archive "$folder\Downloads\Import-Csv.zip" "$folder\Downloads\"
-    move "$folder\Downloads\Import-Csv-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\Import-Csv"
-    Import-Module Import-Csv#>
-}
+#Write-Host "======================================================================================="
+#Write-Host "`nChecking for Import-Csv Module"
+#if((Get-Module -ListAvailable).Name -notcontains "Import-Csv")
+#{
+#    Write-Host "Csv PS module not found.."  -BackgroundColor Red
+#    Write-Host "=======================================================================================" 
+#    $response = read-host "Do you want to continue download and install Csv PS Module? 'Y' or 'N' : "
+#
+#    if($response.ToUpper() -eq "Y")
+#    {
+#    Write-Host "Downloading Import-Csv PS Module..."
+#    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+#    try { Install-Module -Name Import-Csv} 
+#            catch {
+#
+#               Write-Host "======================================================================================="  
+#               Write-Host "Error while downloading Importexcel package , Please make sure computer is connected to internet "  -ForegroundColor Red  
+#               Write-Host "Or "  -ForegroundColor Red 
+#               Write-Host "Please install it manually "  -ForegroundColor Red   
+#               Write-Host "======================================================================================="  
+#               Write-Host "Please see the error below & execution has been stopped          " 
+#            throw  $_.Exception.Response.StatusCode.Value__
+#            }
+#    
+#    Write-Host "Downloaded."
+#    }
+#    else
+#    {
+#        Write-Host "Csv PS module is required for the execution. Exiting..."
+#        exitCode
+#    }
+#    <#Expand-Archive "$folder\Downloads\Import-Csv.zip" "$folder\Downloads\"
+#    move "$folder\Downloads\Import-Csv-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\Import-Csv"
+#    Import-Module Import-Csv#>
+#}
 
 
 # Read the input config Csv and validate
