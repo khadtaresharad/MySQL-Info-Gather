@@ -22,7 +22,7 @@
 <#
     Change Log
     ----------
-•	Customer consent to install ImportCSV PS Module and Azure CLI
+•	Customer consent to install Import-Csv PS Module and Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
 •	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-MySQL_Server_Input_file.csv file (Server_List csv)
@@ -78,10 +78,10 @@ createFolder $folder\Output\
 createFolder $folder\Output\Single\
 
 
-#Check for ImportCSV module
+#Check for Import-Csv module
 Write-Host "======================================================================================="
-Write-Host "`nChecking for ImportCSV Module"
-if((Get-Module -ListAvailable).Name -notcontains "ImportCsv")
+Write-Host "`nChecking for Import-Csv Module"
+if((Get-Module -ListAvailable).Name -notcontains "Import-Csv")
 {
     Write-Host "Csv PS module not found.."  -BackgroundColor Red
     Write-Host "=======================================================================================" 
@@ -89,10 +89,10 @@ if((Get-Module -ListAvailable).Name -notcontains "ImportCsv")
 
     if($response.ToUpper() -eq "Y")
     {
-    Write-Host "Downloading ImportCsv PS Module..."
+    Write-Host "Downloading Import-Csv PS Module..."
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-    try { Install-Module -Name ImportCsv} 
+    try { Install-Module -Name Import-Csv} 
             catch {
 
                Write-Host "======================================================================================="  
@@ -111,9 +111,9 @@ if((Get-Module -ListAvailable).Name -notcontains "ImportCsv")
         Write-Host "Csv PS module is required for the execution. Exiting..."
         exitCode
     }
-    <#Expand-Archive "$folder\Downloads\ImportCsv.zip" "$folder\Downloads\"
-    move "$folder\Downloads\ImportCsv-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\ImportCsv"
-    Import-Module ImportCsv#>
+    <#Expand-Archive "$folder\Downloads\Import-Csv.zip" "$folder\Downloads\"
+    move "$folder\Downloads\Import-Csv-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\Import-Csv"
+    Import-Module Import-Csv#>
 }
 
 
