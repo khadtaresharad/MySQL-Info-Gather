@@ -22,10 +22,10 @@
 <#
     Change Log
     ----------
-•	Customer consent to install ImportExcel PS Module and Azure CLI
+•	Customer consent to install Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
-•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-MySQL_Server_Input_file.csv file (Server_List csv)
+•	Incorporated Vcore column in INPUT CSV Sheet  CMF-MySQL_Server_Input_file.csv file (Server_List csv)
 •	Incorporated servername in DB_List, Config_Details,AD Admin and Firewall-rule List  CLI commands output in output.xlsx
 •	No column Filter applied when exporting AZURE CLI Commands output to output.xlsx file
 •	Included az mysql server replica list CLI
@@ -77,47 +77,7 @@ createFolder $folder/Logs/
 createFolder $folder/Output/
 createFolder $folder/Output/Single/
 
-
-#Check for ImportExcel module
-#Write-Host "======================================================================================="
-#Write-Host "`nChecking for ImportExcel Module"
-#if((Get-Module -ListAvailable).Name -notcontains "ImportExcel")
-#{
-#    Write-Host "Excel PS module not found.."  -BackgroundColor Red
-#    Write-Host "=======================================================================================" 
-#    $response = read-host "Do you want to continue download and install Excel PS Module? 'Y' or 'N' : "
-#
-#    if($response.ToUpper() -eq "Y")
-#    {
-#    Write-Host "Downloading ImportExcel PS Module..."
-#    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-#    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-#    try { Install-Module -Name ImportExcel} 
-#            catch {
-#
-#               Write-Host "======================================================================================="  
-#               Write-Host "Error while downloading Importexcel package , Please make sure computer is connected to internet "  -ForegroundColor Red  
-#               Write-Host "Or "  -ForegroundColor Red 
-#               Write-Host "Please install it manually "  -ForegroundColor Red   
-#               Write-Host "======================================================================================="  
-#               Write-Host "Please see the error below & execution has been stopped          " 
-#            throw  $_.Exception.Response.StatusCode.Value__
-#            }
-#    
-#    Write-Host "Downloaded."
-#    }
-#    else
-#    {
-#        Write-Host "Excel PS module is required for the execution. Exiting..."
-#        exitCode
-#    }
-#    <#Expand-Archive "$folder/Downloads/ImportExcel.zip" "$folder/Downloads/"
-#    move "$folder/Downloads/ImportExcel-7.8.0" "C:/Program Files/WindowsPowerShell/Modules/ImportExcel"
-#    Import-Module ImportExcel#>
-#}
-
-
-# Read the input config Excel and validate
+# Read the input config CSV and validate
 $inputfile = $PSScriptRoot+"/Azure_Subscription.csv"
 Write-Host "Input file is $inputfile " -ForegroundColor Green
 Write-Host "===================================================================="  
@@ -255,7 +215,13 @@ If($Validation.Status.Contains("FAILED"))
 		}elseif ($h.Value -is [Hashtable]){
 			CMF-Read-Nested-Hashtable $h.Name $h.Value
 		}else{
-			$global:row.Add($h.Name, $h.Value)
+                       $key = $h.Name
+                       if ($global:row.ContainsKey($key)) {
+                         $global:row[$key] = $h.Value
+                       }
+                       else {   
+			 $global:row.Add($key, $h.Value)
+                       }
 		}
 	}
 	$global:alldata += $global:row
@@ -270,7 +236,13 @@ If($Validation.Status.Contains("FAILED"))
             $newPrefix=-join($prefix,".",$h.Name)
 			CMF-Read-Nested-Hashtable $newPrefix $h.Value
 		}else{
-			$global:row.Add(-join($prefix,".",$h.Name), $h.Value)
+                       $key = -join @($prefix, ".", $h.Name)
+                       if ($global:row.ContainsKey($key)) {
+                         $global:row[$key] = $h.Value
+                       }
+                       else {   
+			 $global:row.Add($key, $h.Value)
+                       }
 		}
 	    }
     }

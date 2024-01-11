@@ -25,7 +25,7 @@
 •	Customer consent to install Import-Csv PS Module and Azure CLI
 •	Excluded Flexi server Azure CLI commands.
 •	Excluded Azure CLI commands Json file generation for single servers except Server list.
-•	Incorporated Vcore column in INPUT EXCEL  Sheet  CMF-MySQL_Server_Input_file.csv file (Server_List csv)
+•	Incorporated Vcore column in INPUT CSV  Sheet  CMF-MySQL_Server_Input_file.csv file (Server_List csv)
 •	Incorporated servername in DB_List, Config_Details,AD Admin and Firewall-rule List  CLI commands output in output.csv
 •	No column Filter applied when exporting AZURE CLI Commands output to output.csv file
 •	Included az MySQL server replica list CLI
@@ -96,7 +96,7 @@ createFolder $folder\Output\Single\
 #            catch {
 #
 #               Write-Host "======================================================================================="  
-#               Write-Host "Error while downloading Importexcel package , Please make sure computer is connected to internet "  -ForegroundColor Red  
+#               Write-Host "Error while downloading ImportCSV package , Please make sure computer is connected to internet "  -ForegroundColor Red  
 #               Write-Host "Or "  -ForegroundColor Red 
 #               Write-Host "Please install it manually "  -ForegroundColor Red   
 #               Write-Host "======================================================================================="  
@@ -255,7 +255,13 @@ If($Validation.Status.Contains("FAILED"))
 		}elseif ($h.Value -is [Hashtable]){
 			CMF-Read-Nested-Hashtable $h.Name $h.Value
 		}else{
-			$global:row.Add($h.Name, $h.Value)
+                       $key = $h.Name
+                       if ($global:row.ContainsKey($key)) {
+                         $global:row[$key] = $h.Value
+                       }
+                       else {   
+			 $global:row.Add($key, $h.Value)
+                       }
 		}
 	}
 	$global:alldata += $global:row
@@ -270,7 +276,13 @@ If($Validation.Status.Contains("FAILED"))
             $newPrefix=-join($prefix,".",$h.Name)
 			CMF-Read-Nested-Hashtable $newPrefix $h.Value
 		}else{
-			$global:row.Add(-join($prefix,".",$h.Name), $h.Value)
+                       $key = -join @($prefix, ".", $h.Name)
+                       if ($global:row.ContainsKey($key)) {
+                         $global:row[$key] = $h.Value
+                       }
+                       else {   
+			 $global:row.Add($key, $h.Value)
+                       }
 		}
 	    }
     }

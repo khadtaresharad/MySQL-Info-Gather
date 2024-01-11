@@ -5,7 +5,7 @@
 #  Author         : Rackimuthu Kandaswamy , Sireesha , VenkannaBabu , Saby
 #  Version        : 1.1
 #   
-#  INPUT          : Server List and other parameters in Excel file
+#  INPUT          : Server List and other parameters in CSV file
 #  VARIABLE       : NONE
 #  PARENT         : NONE
 #  CHILD          : NONE
@@ -126,7 +126,7 @@ if (Test-Path $MySQL_Log_File) {
     if($response -eq "n"){exitcode}    
   
 
-# Read the input config Excel and validate
+# Read the input config CSV and validate
 $inputfile = "$Folder\CMF_MySQL_Server_Input_file.csv"
 Write-Host "Input file is $inputfile." -ForegroundColor Green
 Write-Host "======================================================================================="
@@ -147,8 +147,8 @@ if (-not(Test-Path -Path $inputfile -PathType Leaf)) {
 else
 {
      try {
-         $sqllist_Read_Excel = Import-Csv -Path $inputfile #-WorksheetName Server_List
-         $Approved_Rows = $sqllist_Read_Excel | Where-Object { $_.Approval_Status.toupper() -eq "YES" }
+         $sqllist_Read_CSV = Import-Csv -Path $inputfile #-WorksheetName Server_List
+         $Approved_Rows = $sqllist_Read_CSV | Where-Object { $_.Approval_Status.toupper() -eq "YES" }
 
          $ConfigList = $Approved_Rows | Group-Object -Property 'Host_Name' | ForEach-Object {
                 $_.Group | Select-Object -First 1
@@ -195,7 +195,7 @@ exitcode
   }
 
 
-##Input Excel validation is done
+##Input CSV validation is done
 
 
 
