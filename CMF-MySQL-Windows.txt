@@ -275,6 +275,15 @@ foreach ($row_Content in $ConfigList) {
     #$escapedDBCommand = "`"-D $DB_Name --ssl-mode=$SSL`""
     #$mysqlCommand = "mysql -h %$Host_Name% --ssl-mode=%$SSL% -u %$User_ID% %%x < %%x_%dt_ts%.sql"
     #$mysqlCommand="mysql -u $User_ID -h $Host_Name -P $Port -p $Password -D $DB_Name --ssl-mode=$SSL < $DbGather_path > $Log_File"
+
+    $sourceFilePath="$Folder\mysql.cnf"
+    $destinationFilePath="$Folder\config.cnf"
+    $searchPattern="NEWPASS"
+    Copy-Item -Path $sourceFilePath -Destination $destinationFilePath
+    $content = Get-Content -Path $destinationFilePath -Raw
+    $newContent = $content -replace $searchPattern, $password
+    Set-Content -Path $destinationFilePath -Value $newContent
+
     $mysqlCommand="mysql -u $User_ID -h $Host_Name -p$Password -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
     #Write-host $mysqlCommand
     Invoke-Expression "$mysqlCommand 2>&1 | Out-File -FilePath $Log_File"

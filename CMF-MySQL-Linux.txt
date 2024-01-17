@@ -276,7 +276,12 @@ foreach ($row_Content in $ConfigList) {
     #$escapedDBCommand = "`"-D $DB_Name --ssl-mode=$SSL`""
     #$mysqlCommand = "mysql -h %$Host_Name% --ssl-mode=%$SSL% -u %$User_ID% %%x < %%x_%dt_ts%.sql"
     #$mysqlCommand="mysql -u $User_ID -h $Host_Name -P $Port -p $Password -D $DB_Name --ssl-mode=$SSL < $DbGather_path > $Log_File"
-    $mysqlCommand="mysql -u $User_ID -h $Host_Name -p$Password -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
+
+    $Config_File="$Folder/config.cnf"
+    echo [client] > $Config_File
+    echo password=$password >> $Config_File
+    $mysqlCommand="mysql --defaults-extra-file=$Config_File -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
+
     #Write-host $mysqlCommand
     Invoke-Expression "$mysqlCommand 2>&1 | Out-File -FilePath $Log_File"
     $stat = $LASTEXITCODE
