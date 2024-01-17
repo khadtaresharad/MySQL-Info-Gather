@@ -284,7 +284,7 @@ foreach ($row_Content in $ConfigList) {
     $newContent = $content -replace $searchPattern, $password
     Set-Content -Path $destinationFilePath -Value $newContent
 
-    $mysqlCommand="mysql -u $User_ID -h $Host_Name -p$Password -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
+    $mysqlCommand="mysql --defaults-extra-file=$destinationFilePath -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
     #Write-host $mysqlCommand
     Invoke-Expression "$mysqlCommand 2>&1 | Out-File -FilePath $Log_File"
     $stat = $LASTEXITCODE
