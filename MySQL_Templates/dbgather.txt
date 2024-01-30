@@ -163,5 +163,16 @@ SELECT table_schema, table_name, column_name, column_type FROM information_schem
 Select 'TABLE DATA TRUNCATE ERROR INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
 Select 'FOREIGN KEY DATATYPE MISMATCH INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
-SELECT     CONCAT(table1.table_schema, '.', table1.table_name) AS referencing_table,     table1.column_name AS referencing_column,     table1.constraint_name AS pk_constraint_name,     CONCAT(table2.table_schema, '.', table2.table_name) AS referenced_table,     table2.column_name AS referenced_column,     table2.constraint_name AS fk_constraint_name FROM     information_schema.key_column_usage AS table1 JOIN     information_schema.referential_constraints AS ref ON     table1.constraint_name = ref.constraint_name JOIN     information_schema.key_column_usage AS table2 ON     ref.unique_constraint_name = table2.constraint_name WHERE     table1.table_schema not in ('information_schema', 'mysql', 'sys', 'performance_schema') AND table1.referenced_table_name IS NOT NULL;
+ SELECT CONCAT(table1.table_schema, '.', table1.table_name) AS referencing_table,     
+               table1.column_name AS referencing_column,     
+               table1.constraint_name AS pk_constraint_name,     
+        CONCAT(table2.table_schema, '.', table2.table_name) AS referenced_table,     
+               table2.column_name AS referenced_column,     
+               table2.constraint_name AS fk_constraint_name 
+ FROM     information_schema.key_column_usage AS table1 
+ JOIN     information_schema.referential_constraints AS ref ON     table1.constraint_name = ref.constraint_name 
+ JOIN     information_schema.key_column_usage AS table2 ON     ref.unique_constraint_name = table2.constraint_name 
+ AND      table1.column_name = table2.column_name
+WHERE     table1.table_schema not in ('information_schema', 'mysql', 'sys', 'performance_schema') AND 
+          table1.referenced_table_name IS NOT NULL;
 Select 'FOREIGN KEY DATATYPE MISMATCH INFO END' as "Query_Description",CURRENT_TIMESTAMP;
