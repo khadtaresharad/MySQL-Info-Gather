@@ -163,16 +163,50 @@ SELECT table_schema, table_name, column_name, column_type FROM information_schem
 Select 'TABLE DATA TRUNCATE ERROR INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
 Select 'FOREIGN KEY DATATYPE MISMATCH INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
- SELECT CONCAT(table1.table_schema, '.', table1.table_name) AS referencing_table,     
-               table1.column_name AS referencing_column,     
-               table1.constraint_name AS pk_constraint_name,     
-        CONCAT(table2.table_schema, '.', table2.table_name) AS referenced_table,     
-               table2.column_name AS referenced_column,     
-               table2.constraint_name AS fk_constraint_name 
- FROM     information_schema.key_column_usage AS table1 
- JOIN     information_schema.referential_constraints AS ref ON     table1.constraint_name = ref.constraint_name 
- JOIN     information_schema.key_column_usage AS table2 ON     ref.unique_constraint_name = table2.constraint_name 
- AND      table1.column_name = table2.column_name
-WHERE     table1.table_schema not in ('information_schema', 'mysql', 'sys', 'performance_schema') AND 
-          table1.referenced_table_name IS NOT NULL;
+select tab2.CONSTRAINT_NAME,
+tab2.TABLE_SCHEMA,
+tab2.TABLE_NAME,
+tab2.COLUMN_NAME,
+tab1.DATA_TYPE,
+tab2.ORDINAL_POSITION,
+tab2.REFERENCED_TABLE_SCHEMA,
+tab2.REFERENCED_TABLE_NAME,
+tab2.REFERENCED_COLUMN_NAME,
+tab2.DATA_TYPE
+FROM 
+(SELECT
+table1.CONSTRAINT_NAME,
+table1.TABLE_SCHEMA,
+table1.TABLE_NAME,
+table1.COLUMN_NAME,
+table1.ORDINAL_POSITION,
+column1.DATA_TYPE 
+FROM     information_schema.key_column_usage AS table1 
+JOIN     information_schema.columns as column1
+on table1.TABLE_SCHEMA = column1.TABLE_SCHEMA
+and table1.TABLE_NAME   = column1.TABLE_NAME
+and table1.COLUMN_NAME  = column1.COLUMN_NAME ) tab1,
+(SELECT
+table2.CONSTRAINT_NAME,
+table2.TABLE_SCHEMA,
+table2.TABLE_NAME,
+table2.COLUMN_NAME,
+table2.ORDINAL_POSITION,
+table2.REFERENCED_TABLE_SCHEMA,
+table2.REFERENCED_TABLE_NAME,
+table2.REFERENCED_COLUMN_NAME,
+column2.DATA_TYPE 
+FROM     information_schema.key_column_usage AS table2
+JOIN     information_schema.columns as column2
+on table2.REFERENCED_TABLE_SCHEMA = column2.TABLE_SCHEMA
+and table2.REFERENCED_TABLE_NAME  = column2.TABLE_NAME
+and table2.REFERENCED_COLUMN_NAME = column2.COLUMN_NAME) tab2
+WHERE 
+     tab2.CONSTRAINT_NAME  =  tab1.CONSTRAINT_NAME
+and tab2.TABLE_SCHEMA      =  tab1.TABLE_SCHEMA
+and tab2.TABLE_NAME        =  tab1.TABLE_NAME
+and tab2.COLUMN_NAME       =  tab1.COLUMN_NAME
+and tab2.ORDINAL_POSITION  =  tab1.ORDINAL_POSITION
+and tab1.DATA_TYPE != tab2.DATA_TYPE
+Order by 1,2,3;
 Select 'FOREIGN KEY DATATYPE MISMATCH INFO END' as "Query_Description",CURRENT_TIMESTAMP;
