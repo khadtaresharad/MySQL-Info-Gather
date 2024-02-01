@@ -103,9 +103,7 @@ select table_schema as database_name,
        round(index_length/1024/1024, 2) as index_size,
        round((data_length + index_length)/1024/1024, 2) as total_size
 from information_schema.tables
-where table_schema not in('information_schema', 'mysql',
-                          'sys', 'performance_schema')
- --     and table_schema = @dbname
+where table_schema not in('information_schema','mysql','sys','performance_schema')
 order by database_name,total_size desc;
 Select 'DATA AND INDEX INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
@@ -124,8 +122,7 @@ join information_schema.key_column_usage kcu
      and fks.table_name = kcu.table_name
      and fks.constraint_name = kcu.constraint_name
 -- where fks.constraint_schema = @dbname COLLATE @SERVER_COLLATION
-where  fks.constraint_schema not in('information_schema', 'mysql',
-                          'sys', 'performance_schema')
+where  fks.constraint_schema not in('information_schema','mysql','sys','performance_schema')
 group by fks.constraint_schema,
          fks.table_name,
          fks.unique_constraint_schema,
@@ -144,8 +141,7 @@ SELECT CONCAT(table_schema, '.', table_name) table_name,
         ROUND(index_length / data_length, 2)                                           idxPct
  FROM   information_schema.TABLES
 -- WHERE table_schema = @dbname
- WHERE table_schema not in('information_schema', 'mysql',
-                          'sys', 'performance_schema')
+ WHERE table_schema not in('information_schema','mysql','sys','performance_schema')
  ORDER  BY data_length + index_length DESC
  LIMIT  10 ;
 Select 'TOP 10 TABLES SIZE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
@@ -210,3 +206,7 @@ and tab2.ORDINAL_POSITION  =  tab1.ORDINAL_POSITION
 and tab1.DATA_TYPE != tab2.DATA_TYPE
 Order by 1,2,3;
 Select 'FOREIGN KEY DATATYPE MISMATCH INFO END' as "Query_Description",CURRENT_TIMESTAMP;
+
+Select 'DATABASE ENGINE INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+SELECT distinct TABLE_SCHEMA, ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA not in ('information_schema','mysql','sys','performance_schema');
+Select 'DATABASE ENGINE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
