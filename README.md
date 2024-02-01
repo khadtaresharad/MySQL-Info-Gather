@@ -18,8 +18,8 @@ Windows - https://dev.mysql.com/downloads/installer/<br />
 Linux   - https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install-linux-quick.html<br />
 
 Note:-<br /> 
-. Add Azure CLI PATH in Enviornment Variables ( e.g. C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin )<br />
-. Add MySQL Client PATH in Enviornment Variables ( e.g. C:\Program Files\MySQL\bin )<br />
+. Add Azure CLI PATH in Environment Variables ( e.g. C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin )<br />
+. Add MySQL Client PATH in Environment variables ( e.g. C:\Program Files\MySQL\bin )<br />
 
 ## Azure CLI Info Gathering
 1.	Download the package zip file named `MySQL-Info-Gather.zip`
