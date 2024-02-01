@@ -1,5 +1,22 @@
 # Steps To-Do:
 
+# Pre-requisites
+Supported Operating System 
+Windows - Windows 10, Windows Server 2012, Windows Server 2012 R2 and above
+Linux   - RHEL v7 & above, Ubuntu v14 & above
+
+Azure CLI (Install) 
+Windows - https://aka.ms/installazurecliwindows 
+Linux   - https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux/ 
+
+MySQL Client (Install)
+Windows - https://dev.mysql.com/downloads/installer/
+Linux   - https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install-linux-quick.html
+
+Note:-
+- Add Azure CLI PATH in Enviornment Variables ( e.g. C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin )
+- Add MySQL Client PATH in Enviornment Variables ( e.g. C:\Program Files\MySQL\bin )
+
 ## Azure CLI
 1.	Download the package zip file named `MySQL-Info-Gather.zip`
 2.	Extract the `unzip MySQL-Info-Gather.zip` file.
