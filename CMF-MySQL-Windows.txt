@@ -50,15 +50,15 @@ function createFolder([string]$newFolder) {
 
 
 write-host "                                                                                       " -BackgroundColor DarkMagenta
-Write-Host "       Welcome to CMF - MySQL_Server_Automation                                        " -ForegroundColor white -BackgroundColor DarkMagenta
+Write-Host "       Welcome to CMF - MySQL_Info_Gathering_Automation                                " -ForegroundColor white -BackgroundColor DarkMagenta
 write-host "                  (OSS DB Migration factory)                                           " -BackgroundColor DarkMagenta
-write-host "                              V1.1                                                     " -BackgroundColor DarkMagenta
+write-host "                                                                                       " -BackgroundColor DarkMagenta
 Write-Host " "
 
 $folder = $PSScriptRoot
 
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
-Start-Transcript -path  $folder\Logs\MySQL_Server_Automation_Transcript_$today_date.txt -Append
+Start-Transcript -path  $folder\Logs\CMF-MySQL_Info_Gathering_Automation_Transcript_$today_date.txt -Append
 
 $Global:project_name = ""
 
