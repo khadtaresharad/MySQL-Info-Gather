@@ -39,7 +39,7 @@ CLS
 #---------------------------------------------------------PROGRAM BEGINS HERE----------------------------------------------------------
 
 write-host "                                                                            " -BackgroundColor DarkMagenta
-Write-Host "                    Welcome to CMF-MySQL-CLI-Windows                        " -ForegroundColor white -BackgroundColor DarkMagenta
+Write-Host "                    Welcome to CMF-MySQL_Info_Gathering_Automation          " -ForegroundColor white -BackgroundColor DarkMagenta
 write-host "                     (OSS DB Migration Factory)                             " -BackgroundColor DarkMagenta
 write-host "                                                                            " -BackgroundColor DarkMagenta
 Write-Host " "
@@ -47,7 +47,7 @@ Write-Host " "
 $folder = $PSScriptRoot
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
 Write-Host "`n======================================================================================="
-Start-Transcript -path  $folder\Logs\CMF-MySQL-CLI-Windows_$today_date.txt  -Append
+Start-Transcript -path  $folder\Logs\CMF-MySQL_Info_Gathering_Automation_Transcript_$today_date.txt  -Append
 Write-Host "`n======================================================================================="
 
 function exitCode
