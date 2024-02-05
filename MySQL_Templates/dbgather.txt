@@ -92,7 +92,7 @@ Select 'SERVER INNODB INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
 Select 'DATABASE SIZE INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 SELECT table_schema as database_name, SUM(data_length + index_length)/1024/1024 AS total_mb, SUM(data_length)/1024/1024 AS data_mb, SUM(index_length)/1024/1024 AS index_mb, COUNT(*) AS tables, CURDATE() AS today 
-FROM information_schema.tables 
+FROM information_schema.tables where table_schema not in ('information_schema','mysql','sys','performance_schema') 
 GROUP BY table_schema ORDER BY 2 DESC ;
 Select 'DATABASE SIZE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
