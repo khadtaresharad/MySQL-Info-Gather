@@ -46,9 +46,9 @@ Write-Host " "
 
 $folder = $PSScriptRoot
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
-Write-Host "`n======================================================================================="
-Start-Transcript -path  $folder\Logs\CMF-MySQL_Info_Gathering_Automation_Transcript_$today_date.txt  -Append
-Write-Host "`n======================================================================================="
+ Write-Host "==============================================================================================================" 
+ Start-Transcript -path  $folder\Logs\CMF-MySQL_Info_Gathering_Automation_Transcript_$today_date.txt  -Append
+ Write-Host "==============================================================================================================" 
 
 function exitCode
 {
@@ -120,14 +120,14 @@ createFolder $folder\Output\Single\
 # Read the input config Csv and validate
 $inputfile = $PSScriptRoot+"\Azure_Subscription.csv"
 Write-Host "Input file is $inputfile " -ForegroundColor Green
-Write-Host "===================================================================="  
+ Write-Host "==============================================================================================================" 
 
 
 if (-not(Test-Path -Path $inputfile -PathType Leaf)) {
     try {    
-         Write-Host "======================================================================================="  
+         Write-Host "==============================================================================================================" 
          Write-Host "Unable to read the input file [$inputfile]. Check file & its permission...  "  -BackgroundColor Red
-         Write-Host "======================================================================================="  
+         Write-Host "==============================================================================================================" 
          Write-Host "Please see the error below Execution has been stopped          "  
          throw $_.Exception.Message                      
     }
@@ -142,9 +142,9 @@ else
          }
 
          catch {
-         Write-Host "=================================================================================="  
+         Write-Host "==============================================================================================================" 
          Write-Host "The file [$inputfile] does not have the woksheet named Azure_Subscription "  -BackgroundColor Red 
-         Write-Host "=================================================================================="  
+         Write-Host "==============================================================================================================" 
          Write-Host "Please see the error below & MySQL CLI WINDOWS has been stopped          "  
          throw $_.Exception.Message
          exitcode
@@ -191,9 +191,9 @@ $ServerConfigData=@()
 $Validation+=& "$folder/Validation_Scripts/Check_PowerShell_Version.ps1"
 $Validation+=& "$folder/Validation_Scripts/azurecli.ps1"
 
-Write-Host "======================================================================================="  
+Write-Host "==============================================================================================================" 
 Write-Host "Below are the Validation Results"  -ForegroundColor Green  
-Write-Host "======================================================================================="  
+Write-Host "==============================================================================================================" 
 Write-Host ($Validation | select Validation_Type,Status,Comments | Format-Table | Out-String)
 
 If($Validation.Status.Contains("FAILED"))
@@ -361,6 +361,7 @@ else
     $Serverdata+=$alldata
     $alldata=@()
 
+  Write-Host "=============================================================================================================="  
   foreach ($i in $ser_details)
   {
            
@@ -374,9 +375,14 @@ else
       $ser_dom = $dom[0]
       $Logon_User=$Single_User_Name + "@" + $ser_dom
       $vcore=$i.sku.capacity
-
+      $userVisibleState=$i.userVisibleState
+      
+      
+      Write-Host "`nInformation gathering of Azure MySQL Single Server [$ServerName] is in progress..."  -ForegroundColor Yellow   
       $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="3306";VCore=$vcore;Auth_Type="mysql";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status="No";SSL_Mode="PREFERRED"}
-          
+ 
+ if ($userVisibleState -match "Ready")
+    {           
     try
     {    
     #DB List
@@ -461,26 +467,28 @@ else
       throw  $_.Exception.Response.StatusCode.Value__
       exitcode
       }
+      Write-Host "info gathering completed successfully for [$ServerName]." -ForegroundColor Green
       }
-    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -Path $PSScriptRoot\Output\Server_List.csv 
-    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\DB_Details.csv 
-    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\Configuration_Data.csv 
-    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\AD_Admin.csv
-    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\FW_List.csv 
-    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -Path $PSScriptRoot\Output\Replica_List.csv 
+      else
+      {
+      Write-Host "MySQL Single server [$ServerName] state is not 'Ready', Database information can't be captured for [$ServerName]" -ForegroundColor Red
+      }
+      }
+    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Server_List.csv 
+    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\DB_Details.csv 
+    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Configuration_Data.csv 
+    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\AD_Admin.csv
+    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\FW_List.csv 
+    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Replica_List.csv 
 
 
-    Write-Host "=============================================================================================================="  
+    Write-Host "`n=============================================================================================================="  
     Write-Host "Information gathered ==> $folder\Output\Single\ " -ForegroundColor Green -BackgroundColor Black
     Write-Host "Output file created ==> $PSScriptRoot\Output\Output.csv " -ForegroundColor Green -BackgroundColor Black
     Write-Host "==============================================================================================================" 
-  
-    if($Outfiledata -ne $null){
-    $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV $PSScriptRoot\Server_List.csv
-    $originalCsvFilePath = "$PSScriptRoot\Server_List.csv"
-    $newCsvFilePath = "$PSScriptRoot\CMF_MySQL_Server_Input_file.csv"
-    $content = Get-Content -Path $originalCsvFilePath | Select-Object -Skip 1
-    $content | Set-Content -Path $newCsvFilePath
+
+   if($Outfiledata -ne $null){
+    $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV -NoTypeInformation $PSScriptRoot\CMF_MySQL_Server_Input_file.csv
     }
     
-}  
+}
