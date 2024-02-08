@@ -480,15 +480,35 @@ else
     $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\AD_Admin.csv
     $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\FW_List.csv 
     $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Replica_List.csv 
-
-
-    Write-Host "`n=============================================================================================================="  
-    Write-Host "Information gathered ==> $folder\Output\Single\ " -ForegroundColor Green -BackgroundColor Black
-    Write-Host "Output file created ==> $PSScriptRoot\Output\Output.csv " -ForegroundColor Green -BackgroundColor Black
-    Write-Host "==============================================================================================================" 
-
-   if($Outfiledata -ne $null){
+    if($Outfiledata -ne $null){
     $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV -NoTypeInformation $PSScriptRoot\CMF_MySQL_Server_Input_file.csv
     }
     
+    Write-Host "`n=============================================================================================================="  
+    Write-Host "Information gathered ==> $folder\Output\ " -ForegroundColor Green -BackgroundColor Black
+    Write-Host "MySQL Server List created ==> $PSScriptRoot\CMF_MySQL_Server_Input_file.csv " -ForegroundColor Green -BackgroundColor Black
+    Write-Host "Update mandatory fields along with ""Approval_Status"" column in above CSV and execute script ""CMF-MySQL-Windows.ps1"" to gather database level info." -ForegroundColor Yellow -BackgroundColor Black
+    Write-Host "==============================================================================================================" 
+      
+      
+     #Verify output files
+       If (@(Get-ChildItem $PSScriptRoot\Output\*.* -Recurse).Count -lt 7)
+       {
+       Write-host "Not all output files are created successfully. Please check!" -ForegroundColor Red
+       }
+       else
+       {
+       
+       Write-host "`nBelow output files have been created successfully on ""Output"" folder.." -ForegroundColor Green
+       Get-ChildItem -Path $PSScriptRoot\Output\*.* -Recurse -Force | ForEach {
+        [PSCustomObject]@{
+        Name = $_.Name
+       
+        Size ="{0:N2} KB" -f ($_.Length / 1KB)
+        }
+       }
+       }
+
+
+   
 }
