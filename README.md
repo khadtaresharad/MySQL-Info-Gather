@@ -22,7 +22,7 @@ Add PATH in Enviornment Variables (Windows)<br />
 `Azure CLI  ( e.g. C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin )`<br />
 `MySQL Client ( e.g. C:\Program Files\MySQL\bin )`<br />
 
-## Step1. Azure CLI Info Gathering ( Only for Azure Database for MySQL Single Servers )
+## Step1. Azure CLI Info Gathering (Only for Azure Database for MySQL Single Servers)
 1.	Download the package zip file named `MySQL-Info-Gather.zip`
 2.	Extract the `unzip MySQL-Info-Gather.zip` file.
 3.	Run `rename rename.txt rename.bat` and Execute the `rename.bat` ( Windows ) 
@@ -32,24 +32,24 @@ Add PATH in Enviornment Variables (Windows)<br />
 7.  Execute `pwsh ./CMF-MySQL-CLI-Linux.ps1` (Linux)
 8.	Once the execution completed, you can check the output & Logs folder.
 
-## Step2. Update CMF_MySQL_Server_Input_file.csv ( Mandatory )
+## Step2. Update CMF_MySQL_Server_Input_file.csv (Mandatory)
 "**Host_Name**","Resource_Group","**Port**","VCore","Auth_Type","**User_ID**","**Password**","**DB_Name**","Tenant","Subscription_ID","**Approval_Status**","SSL_Mode"
 
 **Note:-**<br />
 . Highlighted are **Mandatory Fields**<br />
 . Update Mandatory fields manually in case of Azure VM / On-premises Servers <br />
 
-## Step3. MySQL Server Info Gathering ( Mandatory )
+## Step3. MySQL Server Info Gathering (Mandatory)
 1.	Execute `powershell.exe .\CMF-MySQL-Windows.ps1` ( Windows )
 2.  Execute `pwsh ./CMF-MySQL-Linux.ps1` ( Linux )
 3.	Once the execution completed, you can check the output & Logs folder.
 
-## Step4. Azure VM/On-premises Servers  ( Only for On-Premises / AWS  / GCP Servers )
+## Step4. Azure VM/On-premises Servers  (Only for On-Premises / Azure VM / Other Cloud Servers)
 . Refer document `CMF-ON-Prem_Server_Info_gather.docx` from the zip folder and update details and share document.<br />
 
 Host-Name  | Cores | Memory | Storage Size | Storage Type | OS type | OS version | IOPS 
 
-## Step5. Zip and share output, log folders ( Mandatory for all servers ) 
+## Step5. Zip and share output, log folders (Mandatory) 
 Kindly follow the execution instructions mentioned in attached documents. 
 If there is/are any queries, please let us know, we will connect and check.
 
