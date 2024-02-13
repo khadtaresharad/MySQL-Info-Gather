@@ -5,7 +5,7 @@ Supported OS<br />
 Windows 10, Windows Server 2012, Windows Server 2012 R2 and above
 Linux RHEL v7 & above, Ubuntu v14 & above
 
-Powershell (install)<br /> 
+Powershell (Install)<br /> 
 Windows - https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4<br /> 
 Linux   - https://learn.microsoft.com/en-us/powershell/scripting/install/install-rhel?view=powershell-7.4<br /> 
 
@@ -20,9 +20,9 @@ Linux   - https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-install-linux
  **Note**: - <br />
 Add PATH in Enviornment Variables (Windows)<br />
 `Azure CLI  ( e.g. C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin )`<br />
-`MySQL Client ( e.g. C:\Program Files\MySQL\bin )<br />`
+`MySQL Client ( e.g. C:\Program Files\MySQL\bin )`<br />
 
-## Azure CLI Info Gathering
+## Step1. Azure CLI Info Gathering ( Only for Azure Database for MySQL Single Servers )
 1.	Download the package zip file named `MySQL-Info-Gather.zip`
 2.	Extract the `unzip MySQL-Info-Gather.zip` file.
 3.	Run `rename rename.txt rename.bat` and Execute the `rename.bat` ( Windows ) 
@@ -32,26 +32,26 @@ Add PATH in Enviornment Variables (Windows)<br />
 7.  Execute `pwsh ./CMF-MySQL-CLI-Linux.ps1` (Linux)
 8.	Once the execution completed, you can check the output & Logs folder.
 
-## Update CMF_MySQL_Server_Input_file.csv
+## Step2. Update CMF_MySQL_Server_Input_file.csv ( Mandatory )
 "**Host_Name**","Resource_Group","**Port**","VCore","Auth_Type","**User_ID**","**Password**","**DB_Name**","Tenant","Subscription_ID","**Approval_Status**","SSL_Mode"
 
-Note:-<br />
+**Note:-**<br />
 . Highlighted are **Mandatory Fields**<br />
 . Update Mandatory fields manually in case of Azure VM / On-premises Servers <br />
 
-## MySQL Server Info Gathering
+## Step3. MySQL Server Info Gathering ( Mandatory )
 1.	Execute `powershell.exe .\CMF-MySQL-Windows.ps1` ( Windows )
 2.  Execute `pwsh ./CMF-MySQL-Linux.ps1` ( Linux )
 3.	Once the execution completed, you can check the output & Logs folder.
 
-## Azure VM/On-premises Servers 
-. Refer document `CMF-ON-Prem_Server_Info_gather.docx` from the zip folder and update details and share document.
+## Step4. Azure VM/On-premises Servers  ( Only for On-Premises / AWS  / GCP Servers )
+. Refer document `CMF-ON-Prem_Server_Info_gather.docx` from the zip folder and update details and share document.<br />
 
-## Zip and share output, log folders and `CMF-ON-Prem_Server_Info_gather.docx` ( if applicable ) 
+Host-Name  | Cores | Memory | Storage Size | Storage Type | OS type | OS version | IOPS 
 
+## Step5. Zip and share output, log folders ( Mandatory for all servers ) 
 Kindly follow the execution instructions mentioned in attached documents. 
 If there is/are any queries, please let us know, we will connect and check.
-
 
 
 **Disclaimer:**
