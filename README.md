@@ -32,14 +32,14 @@ Add PATH in Enviornment Variables (Windows)<br />
 7.  Execute `pwsh ./CMF-MySQL-CLI-Linux.ps1` (Linux)
 8.	Once the execution completed, you can check the output & Logs folder.
 
-## Step2. Update CMF_MySQL_Server_Input_file.csv (Mandatory)
+## Step2. Update CMF_MySQL_Server_Input_file.csv (For All Servers)
 "**Host_Name**","Resource_Group","**Port**","VCore","Auth_Type","**User_ID**","**Password**","**DB_Name**","Tenant","Subscription_ID","**Approval_Status**","SSL_Mode"
 
 **Note:-**<br />
 . Highlighted are **Mandatory Fields**<br />
 . Update Mandatory fields manually in case of Azure VM / On-premises Servers <br />
 
-## Step3. MySQL Server Info Gathering (Mandatory)
+## Step3. MySQL Server Info Gathering (For All Servers)
 1.	Execute `powershell.exe .\CMF-MySQL-Windows.ps1` ( Windows )
 2.  Execute `pwsh ./CMF-MySQL-Linux.ps1` ( Linux )
 3.	Once the execution completed, you can check the output & Logs folder.
@@ -49,14 +49,13 @@ Add PATH in Enviornment Variables (Windows)<br />
 
 Host-Name  | Cores | Memory | Storage Size | Storage Type | OS type | OS version | IOPS 
 
-## Step5. Zip and share output, log folders (Mandatory) 
+## Step5. Zip and share output, log folders (For All Servers) 
 Kindly follow the execution instructions mentioned in attached documents. 
 If there is/are any queries, please let us know, we will connect and check.
 
 
 **Disclaimer:**
-The following PowerShell scripts provided are intended for use as a Info Gather utility tool and do not directly interact with the user database server or store any sensitive information, including passwords. These scripts are provided as-is without any warranty, express or implied.
-While every effort has been made to ensure the accuracy and reliability of the scripts, it is recommended to review and test them in a non-production environment before deploying them in a production environment.
-It is important to note that these scripts should not be used to directly modify or interact with the database server without proper understanding and consideration of potential impacts on the server and data integrity.
-Furthermore, these scripts do not handle sensitive information such as passwords directly within the script. It is the responsibility of the user to ensure that any sensitive information, including passwords, is handled securely and in compliance with organizational security policies.
-By using these scripts, you acknowledge and agree that the authors and contributors shall not be liable for any damages or losses arising from the use of these scripts.
+These scripts are intended for use of Info Gather Assessment utility and do not interact with the user databases or gather any sensitive information (e.g passwords, PI data etc.). 
+These scripts are provided as-is to merely capture metadata information ONLY. While every effort has been made to ensure that accuracy and reliability of the scripts, 
+it is recommended to review and test them in a non-production environment before deploying them in a production environment.
+It is important to note that these scripts should be modified with consultation of Microsoft.
