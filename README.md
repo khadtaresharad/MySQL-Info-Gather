@@ -51,3 +51,12 @@ Note:-<br />
 
 Kindly follow the execution instructions mentioned in attached documents. 
 If there is/are any queries, please let us know, we will connect and check.
+
+
+
+**Disclaimer:**
+The following PowerShell scripts provided are intended for use as a Info Gather utility tool and do not directly interact with the user database server or store any sensitive information, including passwords. These scripts are provided as-is without any warranty, express or implied.
+While every effort has been made to ensure the accuracy and reliability of the scripts, it is recommended to review and test them in a non-production environment before deploying them in a production environment.
+It is important to note that these scripts should not be used to directly modify or interact with the database server without proper understanding and consideration of potential impacts on the server and data integrity.
+Furthermore, these scripts do not handle sensitive information such as passwords directly within the script. It is the responsibility of the user to ensure that any sensitive information, including passwords, is handled securely and in compliance with organizational security policies.
+By using these scripts, you acknowledge and agree that the authors and contributors shall not be liable for any damages or losses arising from the use of these scripts.
