@@ -184,8 +184,8 @@ $Outputexcel=@()
 $DBListData=@()
 $AdAdminData=@()
 
-$alldata =@()
-$row=@{}
+$global:alldata =@()
+$global:row=@{}
 $FWData=@()
 $ServerConfigData=@()
 $Validation+=& "$folder/Validation_Scripts/Check_PowerShell_Version.ps1"
@@ -378,7 +378,7 @@ else
       $userVisibleState=$i.userVisibleState
       
       
-      Write-Host "`nInformation gathering of Azure MySQL Single Server [$ServerName] is in progress..."  -ForegroundColor Yellow   
+      #Write-Host "`nInformation gathering of Azure MySQL Single Server [$ServerName] is in progress..."  -ForegroundColor Yellow   
       $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="3306";VCore=$vcore;Auth_Type="mysql";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status="No";SSL_Mode="PREFERRED"}
  
  if ($userVisibleState -match "Ready")
@@ -467,11 +467,11 @@ else
       throw  $_.Exception.Response.StatusCode.Value__
       exitcode
       }
-      Write-Host "info gathering completed successfully for [$ServerName]." -ForegroundColor Green
+      #Write-Host "info gathering completed successfully for [$ServerName]." -ForegroundColor Green
       }
       else
       {
-      Write-Host "MySQL Single server [$ServerName] state is not 'Ready', Database information can't be captured for [$ServerName]" -ForegroundColor Red
+      Write-Host "MySQL Single server [$ServerName] is in ""$userVisibleState"" state, Database(s) information can't be captured for [$ServerName]." -ForegroundColor Red
       }
       }
     $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Server_List.csv 
@@ -490,7 +490,19 @@ else
     Write-Host "Update mandatory fields along with ""Approval_Status"" column in above CSV and execute script ""CMF-MySQL-Windows.ps1"" to gather database level info." -ForegroundColor Yellow -BackgroundColor Black
     Write-Host "==============================================================================================================" 
       
-      
+
+$filenames = 'AD_Admin.csv', 'Configuration_Data.csv', 'DB_Details.csv', 'FW_List.csv','FW_List.csv','Replica_List.csv','Server_List.csv','Single_Server_List.json'
+foreach ($filename in $filenames) {
+$found=$false; 
+Get-ChildItem -Path $PSScriptRoot\Output\ -Recurse | ForEach-Object {if($filename -eq $_.Name) {$found=$true;CONTINUE}$found=$false;}-End { if($found -ne $true) { Write-Host 'FILE ' $filename ' missing in the folder.' -foregroundcolor red}
+ }
+ }
+ If(-Not(Test-Path $PSScriptRoot\CMF_MySQL_Server_Input_file.csv))
+ {
+ Write-Host 'FILE ' CMF_MySQL_Server_Input_file.csv ' missing in the folder.' -foregroundcolor red
+ }
+
+   <#
      #Verify output files
        If (@(Get-ChildItem $PSScriptRoot\Output\*.* -Recurse).Count -lt 7)
        {
@@ -508,7 +520,7 @@ else
         }
        }
        }
-
+    #>
 
    
 }
