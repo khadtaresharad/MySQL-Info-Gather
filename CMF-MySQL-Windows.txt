@@ -240,8 +240,9 @@ foreach ($row_Content in $ConfigList) {
             $Password = $credentials.GetNetworkCredential().Password
             if ([string]::IsNullOrWhitespace($Password)){
                 Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
+                Continue
             }
-			Continue
+			
         }
 
         $DB_Name=$row_Content.'DB_Name'
