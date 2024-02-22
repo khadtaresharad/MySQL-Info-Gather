@@ -342,7 +342,6 @@ if ($Output_data -ne "")
 {
     $Output_data | select Host_Name,Status,LOG_File_Location,Error_Msg | Export-Csv "$Folder\Output\Output.csv" -NoTypeInformation    
 }
-if ($null -ne $destinationFilePath) { Remove-Item $destinationFilePath} 
-
+ if (($null -ne $destinationFilePath) -AND (Test-Path -Path $destinationFilePath)) { Remove-Item $destinationFilePath}
 Stop-Transcript
 exitcode
