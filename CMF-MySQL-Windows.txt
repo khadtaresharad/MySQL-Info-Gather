@@ -236,8 +236,13 @@ foreach ($row_Content in $ConfigList) {
         }
         $Password=$row_Content.'Password'
         if ([string]::IsNullOrWhitespace($Password)){
-            Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
-            Continue
+            $credentials = Get-Credential -UserName $User_ID -Message "Please provide valid credentials for $Host_Name"
+            $Password = $credentials.GetNetworkCredential().Password
+            if ([string]::IsNullOrWhitespace($Password)){
+                Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
+                Continue
+            }
+			
         }
 
         $DB_Name=$row_Content.'DB_Name'
@@ -286,9 +291,10 @@ foreach ($row_Content in $ConfigList) {
 
     $mysqlCommand="mysql --defaults-extra-file=$destinationFilePath -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
     #Write-host $mysqlCommand
+
     Invoke-Expression "$mysqlCommand 2>&1 | Out-File -FilePath $Log_File"
     $stat = $LASTEXITCODE
-    Write-Output "Last operation status: $stat"
+    #Write-Output "Last operation status: $stat"
     If( $stat -ne 0)
     {
        # seems to have failed
@@ -338,5 +344,7 @@ if ($Output_data -ne "")
 {
     $Output_data | select Host_Name,Status,LOG_File_Location,Error_Msg | Export-Csv "$Folder\Output\Output.csv" -NoTypeInformation    
 }
+if (Test-Path $destinationFilePath) { Remove-Item $destinationFilePath} 
+
 Stop-Transcript
 exitcode
