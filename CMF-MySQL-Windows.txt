@@ -239,12 +239,10 @@ foreach ($row_Content in $ConfigList) {
             $credentials = Get-Credential -UserName $User_ID -Message "Please provide valid credentials for $Host_Name"
             $Password = $credentials.GetNetworkCredential().Password
             if ([string]::IsNullOrWhitespace($Password)){
-                Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
-                Continue
-            }
-			
+            Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
+            Continue
         }
-
+        }
         $DB_Name=$row_Content.'DB_Name'
         if ([string]::IsNullOrWhitespace($DB_Name)){
             Write-Host "'DB_Name' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
@@ -344,7 +342,6 @@ if ($Output_data -ne "")
 {
     $Output_data | select Host_Name,Status,LOG_File_Location,Error_Msg | Export-Csv "$Folder\Output\Output.csv" -NoTypeInformation    
 }
-if (Test-Path $destinationFilePath) { Remove-Item $destinationFilePath} 
-
+ if (($null -ne $destinationFilePath) -AND (Test-Path -Path $destinationFilePath)) { Remove-Item $destinationFilePath}
 Stop-Transcript
 exitcode
