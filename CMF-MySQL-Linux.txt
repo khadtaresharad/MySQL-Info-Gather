@@ -235,11 +235,19 @@ foreach ($row_Content in $ConfigList) {
             Write-Host "'User_ID' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
             Continue
         }
+        $auth_type = $row_Content.'auth_type'
         $Password=$row_Content.'Password'
+
         if ([string]::IsNullOrWhitespace($Password)){
-            #check for EntraId user
-            if ($User_ID.Contains('#EXT#')){
-                $Password = $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
+             #check for EntraId user
+            if ($auth_type -eq 'entraid'){
+                #check if az cli is installed
+                if( [bool](Get-Command -Name 'az' -ErrorAction SilentlyContinue)){
+                    $Password = $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
+                }
+                else{
+                    Write-Host "Azure Entra Authenticaton required but no az cli detected. Kindly check az cli installation and retrigger the automation  "  -ForegroundColor Red 
+                }
             }
             else {
 
@@ -291,7 +299,7 @@ foreach ($row_Content in $ConfigList) {
     $Config_File="$Folder/config.cnf"
     echo [client] > $Config_File
     echo password=$password >> $Config_File
-    if($User_ID.Contains('#EXT#'))
+    if($auth_type -eq 'entraid')
     {
         $mysqlCommand="mysql --defaults-extra-file=$destinationFilePath -u $User_ID -h $Host_Name -P $Port -D $DB_Name --enable-cleartext-plugin --ssl-mode=$SSL -e ""source $DbGather_path"""
 
