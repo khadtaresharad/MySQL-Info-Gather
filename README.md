@@ -80,5 +80,5 @@ Credentials handling method depends on customer requirements and relevant `CMF_M
     * password - set `Password` field to the user password
 * Microsoft Entra ID 
     * user - set `User_ID` field to user name  
-    * password - Leave  `Password` field empty 
+    * password - leave  `Password` field empty 
     * authentication type - set `Auth_Type` to `entraid` value
