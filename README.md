@@ -44,7 +44,7 @@ MySQL Client ( e.g. /usr/bin/mysql )<br />
 . Highlighted are **Mandatory Fields**<br />
 . Update Mandatory fields manually in case of Azure VM / On-premises Servers <br />
 . If a **Password** is not provided, this requires interactive console input of the password for each server. 
-. For credentials handling methods refer to [Passing credentials](#Passing-credentials)
+. For credentials handling methods refer to [Passing credentials](#passing-credentials)
 <br />
 
 ## Step3. MySQL Server Info Gathering (For All Servers)
@@ -74,7 +74,10 @@ Credentials handling method depends on customer requirements and relevant `CMF_M
 
 * Default  
     * user - set `User_ID` field to user name  
-    * password - Leave  `Password` field empty for interactive password prompt during scrpt execution or set `Password` field to the user password
+    * password - leave  `Password` field empty for interactive password prompt during scrpt execution 
+* Unattended
+    * user - set `User_ID` field to user name  
+    * password - set `Password` field to the user password
 * Microsoft Entra ID 
     * user - set `User_ID` field to user name  
     * password - Leave  `Password` field empty 
