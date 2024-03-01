@@ -301,11 +301,11 @@ foreach ($row_Content in $ConfigList) {
     echo password=$password >> $Config_File
     if($auth_type -eq 'entraid')
     {
-        $mysqlCommand="mysql --defaults-extra-file=$destinationFilePath -u $User_ID -h $Host_Name -P $Port -D $DB_Name --enable-cleartext-plugin --ssl-mode=$SSL -e ""source $DbGather_path"""
+        $mysqlCommand="mysql --defaults-extra-file=$Config_File -u $User_ID -h $Host_Name -P $Port -D $DB_Name --enable-cleartext-plugin --ssl-mode=$SSL -e ""source $DbGather_path"""
 
     }
     else {
-        $mysqlCommand="mysql --defaults-extra-file=$destinationFilePath -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
+        $mysqlCommand="mysql --defaults-extra-file=$Config_File -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
     }
 
 
