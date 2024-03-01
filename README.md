@@ -79,6 +79,6 @@ Credentials handling method depends on customer requirements and relevant `CMF_M
     * user - set `User_ID` field to user name  
     * password - set `Password` field to the user password
 * Microsoft Entra ID 
-    * user - set `User_ID` field to user name  (this has to be interactive user due to token generated only for interactive user)
+    * user - set `User_ID` field to user name  (this has to be interactive user because script can get an access token for the current account only)
     * password - leave  `Password` field empty 
     * authentication type - set `Auth_Type` to `entraid` value
