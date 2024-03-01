@@ -1,2 +1,2 @@
 ﻿"Host_Name","Resource_Group","Port","VCore","Auth_Type","User_ID","Password","DB_Name","Tenant","Subscription_ID","Approval_Status","SSL_Mode"
-"host-Name.mysql.database.azure.com","xx-xxx-xxxxxxxxx-xxx","3306","1","MySQL","username@host-name","Password","mysql","xxxxxxxxxxx.onmicrosoft.com","xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx","Yes","PREFERRED"
+"host-Name.mysql.database.azure.com","xx-xxx-xxxxxxxxx-xxx","3306","1","MySQL","username@host-name","Password","default","xxxxxxxxxxx.onmicrosoft.com","xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx","Yes","PREFERRED"
