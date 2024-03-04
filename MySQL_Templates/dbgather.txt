@@ -147,7 +147,7 @@ SELECT CONCAT(table_schema, '.', table_name) table_name,
 Select 'TOP 10 TABLES SIZE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
 Select 'SERVER PLUGIN INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
-SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME LIKE '%pam%';
+SELECT PLUGIN_NAME, PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS; -- WHERE PLUGIN_NAME LIKE '%pam%';
 Select 'SERVER PLUGIN INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
 Select 'TABLE INVISIBLE COLUMN INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
@@ -210,3 +210,9 @@ Select 'FOREIGN KEY DATATYPE MISMATCH INFO END' as "Query_Description",CURRENT_T
 Select 'DATABASE ENGINE INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 SELECT distinct TABLE_SCHEMA, ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA not in ('information_schema','mysql','sys','performance_schema') and ENGINE in ('MyISAM','BLACKHOLE','ARCHIVE','FEDERATED');
 Select 'DATABASE ENGINE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
+
+Select 'AAD-USER INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+select user,host,plugin from mysql.user order by 3,1;
+select * from  mysql.user where upper(plugin) like '%AAD%';
+Select 'AAD-USER INFO END' as "Query_Description",CURRENT_TIMESTAMP;
+
