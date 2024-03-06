@@ -234,10 +234,8 @@ foreach ($row_Content in $ConfigList) {
             Write-Host "'User_ID' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
             Continue
         }
-
         $auth_type = $row_Content.'auth_type'
-        $Password=$row_Content.'Password'
-        
+        $Password=$row_Content.'Password'        
         if ([string]::IsNullOrWhitespace($Password)){
             #check for EntraId user
             if ($auth_type -eq 'entraid'){
@@ -250,7 +248,6 @@ foreach ($row_Content in $ConfigList) {
                 }
             }
             else {
-
                 $credentials = Get-Credential -UserName $User_ID -Message "Please provide valid credentials for $Host_Name"
                 $Password = $credentials.GetNetworkCredential().Password
                 if ([string]::IsNullOrWhitespace($Password)){
@@ -259,7 +256,6 @@ foreach ($row_Content in $ConfigList) {
                 }
             }
 
-        }
         }
         $DB_Name=$row_Content.'DB_Name'
         if ([string]::IsNullOrWhitespace($DB_Name)){
