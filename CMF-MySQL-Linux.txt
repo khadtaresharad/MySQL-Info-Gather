@@ -235,15 +235,29 @@ foreach ($row_Content in $ConfigList) {
             Write-Host "'User_ID' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
             Continue
         }
+        $auth_type = $row_Content.'auth_type'
         $Password=$row_Content.'Password'
+
         if ([string]::IsNullOrWhitespace($Password)){
-            $credentials = Get-Credential -UserName $User_ID -Message "Please provide valid credentials for $Host_Name"
-            $Password = $credentials.GetNetworkCredential().Password
-            if ([string]::IsNullOrWhitespace($Password)){
-                Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
-                Continue
+             #check for EntraId user
+            if ($auth_type -eq 'entraid'){
+                #check if az cli is installed
+                if( [bool](Get-Command -Name 'az' -ErrorAction SilentlyContinue)){
+                    $Password = $(az account get-access-token --resource-type oss-rdbms --output tsv --query accessToken)
+                }
+                else{
+                    Write-Host "Azure Entra Authenticaton required but no az cli detected. Kindly check az cli installation and retrigger the automation  "  -ForegroundColor Red 
+                }
             }
-			
+            else {
+
+                $credentials = Get-Credential -UserName $User_ID -Message "Please provide valid credentials for $Host_Name"
+                $Password = $credentials.GetNetworkCredential().Password
+                if ([string]::IsNullOrWhitespace($Password)){
+                    Write-Host "'Password' is not valid in the Server_List worksheet. Kindly check and retrigger the automation  "  -ForegroundColor Red 
+                    Continue
+                }
+            }            
         }
 
         $DB_Name=$row_Content.'DB_Name'
@@ -285,7 +299,15 @@ foreach ($row_Content in $ConfigList) {
     $Config_File="$Folder/config.cnf"
     echo [client] > $Config_File
     echo password=$password >> $Config_File
-    $mysqlCommand="mysql --defaults-extra-file=$Config_File -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
+    if($auth_type -eq 'entraid')
+    {
+        $mysqlCommand="mysql --defaults-extra-file=$Config_File -u $User_ID -h $Host_Name -P $Port -D $DB_Name --enable-cleartext-plugin --ssl-mode=$SSL -e ""source $DbGather_path"""
+
+    }
+    else {
+        $mysqlCommand="mysql --defaults-extra-file=$Config_File -u $User_ID -h $Host_Name -P $Port -D $DB_Name --ssl-mode=$SSL -e ""source $DbGather_path"""
+    }
+
 
     #Write-host $mysqlCommand
     Invoke-Expression "$mysqlCommand 2>&1 | Out-File -FilePath $Log_File"

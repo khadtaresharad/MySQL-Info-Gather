@@ -386,7 +386,7 @@ else
       $k++
      
       # Write-Host "`nInformation gathering of Azure MySQL Single Server [$ServerName] is in progress..."  -ForegroundColor Yellow   
-      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="3306";VCore=$vcore;Auth_Type="mysql";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status="No";SSL_Mode="PREFERRED"}
+      $Outfiledata+=New-Object psobject -Property @{Host_Name=$domain_name;Resource_Group=$ser_rg;Port="3306";VCore=$vcore;Auth_Type="default";User_ID=$Logon_User;Password="";DB_Name="mysql";Tenant=$tenant;Subscription_ID=$Subscription;Approval_Status="No";SSL_Mode="PREFERRED"}
  
  if ($userVisibleState -match "Ready")
     {           
