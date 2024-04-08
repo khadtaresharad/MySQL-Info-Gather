@@ -342,6 +342,9 @@ else
     $Admin=@()
     $Firewall=@()
     $Replica=@()
+    $CMKey=@()
+    $MSDef=@()
+    $SerEnd=@()
     $dbdata=@()
 
     #AZ Connect to provided subscription
@@ -473,6 +476,48 @@ else
     }
     $Replica+=$global:alldata
     $global:alldata=@()
+
+    #CMK List
+
+    $KeyList=az mysql server key list -g $ser_rg -s $ser_dom
+    $KeyList = $KeyList|ConvertFrom-Json | ConvertTo-HashTable
+    if($KeyList -is [Hashtable])
+    {
+        CMF-Read-Hashtable $KeyList
+    }else
+    {
+            CMF-Read-Array $KeyList
+    }
+    $CMKey+=$global:alldata
+    $global:alldata=@()
+
+    #MSDef List
+
+    $MSDefList=az security pricing show -n 'OpenSourceRelationalDatabases'
+    $MSDefList = $MSDefList|ConvertFrom-Json | ConvertTo-HashTable
+    if($MSDefList -is [Hashtable])
+    {
+        CMF-Read-Hashtable $MSDefList
+    }else
+    {
+            CMF-Read-Array $MSDefList
+    }
+    $MSDef+=$global:alldata
+    $global:alldata=@()
+
+    #Serend List
+
+    $SerEndList=az network service-endpoint policy list -g $ser_rg
+    $SerEndList = $SerEndList|ConvertFrom-Json | ConvertTo-HashTable
+    if($SerEndList -is [Hashtable])
+    {
+        CMF-Read-Hashtable $SerEndList
+    }else
+    {
+            CMF-Read-Array $SerEndList
+    }
+    $SerEnd+=$global:alldata
+    $global:alldata=@()
     
   }
   catch
@@ -494,6 +539,9 @@ else
     $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\AD_Admin.csv
     $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\FW_List.csv 
     $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Replica_List.csv 
+    $CMKey| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/CMK_List.csv
+    $MSDef| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/MSDef_List.csv
+    $SerEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/SerEnd_List.csv
     if($Outfiledata -ne $null){
     $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV -NoTypeInformation $PSScriptRoot\CMF_MySQL_Server_Input_file.csv
     }
