@@ -427,7 +427,7 @@ else
 
     #Replica List
     
-    $Replica_List=az mysql server replica list -g $ser_rg -s $ser_dom|ConvertFrom-Json| ConvertTo-HashTable
+    $Replica_List=az mysql server replica list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     if($Replica_List -is [Hashtable])
     {
         CMF-Read-Hashtable $Replica_List
@@ -440,7 +440,7 @@ else
 
     #CMK List
 
-    $KeyList=az mysql server key list -g $ser_rg -s $ser_dom
+    $KeyList=az mysql server key list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     $KeyList = $KeyList|ConvertFrom-Json | ConvertTo-HashTable
     if($KeyList -is [Hashtable])
     {
@@ -454,7 +454,7 @@ else
 
     #MSDef List
 
-    $MSDefList=az security pricing show -n 'OpenSourceRelationalDatabases' 
+    $MSDefList=az security pricing show -n 'OpenSourceRelationalDatabases' | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json 
     $MSDefList = $MSDefList|ConvertFrom-Json | ConvertTo-HashTable
     if($MSDefList -is [Hashtable])
     {
@@ -468,7 +468,7 @@ else
 
     #Serend List
 
-    $SerEndList=az network service-endpoint policy list -g $ser_rg
+    $SerEndList=az network service-endpoint policy list -g $ser_rg | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
     $SerEndList = $SerEndList|ConvertFrom-Json | ConvertTo-HashTable
     if($SerEndList -is [Hashtable])
     {
