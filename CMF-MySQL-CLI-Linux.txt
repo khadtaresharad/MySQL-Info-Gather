@@ -427,7 +427,7 @@ else
 
     #Replica List
     
-    $Replica_List=az mysql server replica list -g $ser_rg -s $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
+    $Replica_List=az mysql server replica list -g $ser_rg -s $ser_dom|ConvertFrom-Json| ConvertTo-HashTable
     if($Replica_List -is [Hashtable])
     {
         CMF-Read-Hashtable $Replica_List
