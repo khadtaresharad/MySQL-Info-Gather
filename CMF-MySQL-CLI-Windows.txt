@@ -345,6 +345,7 @@ else
     $CMKey=@()
     $MSDef=@()
     $SerEnd=@()
+    $PvtEnd=@()
     $dbdata=@()
 
     #AZ Connect to provided subscription
@@ -518,6 +519,20 @@ else
     }
     $SerEnd+=$global:alldata
     $global:alldata=@()
+
+    #Pvtend List
+
+    $PvtEndList=az network private-endpoint-connection list --type Microsoft.DBforMySQL/servers -g $ser_rg -n $ser_dom | ConvertFrom-Json| ForEach-Object { $_ | Add-Member -MemberType NoteProperty -Name 'Servername' -Value $ServerName -PassThru} | ConvertTo-Json
+    $PvtEndList = $PvtEndList|ConvertFrom-Json | ConvertTo-HashTable
+    if($PvtEndList -is [Hashtable])
+    {
+        CMF-Read-Hashtable $PvtEndList
+    }else
+    {
+            CMF-Read-Array $PvtEndList
+    }
+    $PvtEnd+=$global:alldata
+    $global:alldata=@()
     
   }
   catch
@@ -542,6 +557,7 @@ else
     $CMKey| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/CMK_List.csv
     $MSDef| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/MSDef_List.csv
     $SerEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/SerEnd_List.csv
+    $PvtEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/PvtEnd_List.csv
     if($Outfiledata -ne $null){
     $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV -NoTypeInformation $PSScriptRoot\CMF_MySQL_Server_Input_file.csv
     }
