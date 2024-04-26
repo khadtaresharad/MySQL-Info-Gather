@@ -1,0 +1,7 @@
+@echo OFF
+IF exist Output ( echo "Output" folder already exists! ) ELSE ( mkdir Output && echo "Output" Folder created!)
+for /F "skip=1 tokens=1-12 delims=," %%A in (CMF_MySQL_Server_Input_file.csv) do (
+REM "Host_Name","Resource_Group","Port","VCore","Auth_Type","User_ID","Password","DB_Name","Tenant","Subscription_ID","Approval_Status","SSL_Mode"
+SET MYSQL_PWD=%%G
+mysql -u %%F -h %%A -P %%C -D %%H < MySQL_Templates\dbgather.sql > .\Output\Manual_%%A_%%H.log
+)
