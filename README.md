@@ -82,3 +82,13 @@ Credentials handling method depends on customer requirements and relevant `CMF_M
     * user - set `User_ID` field to user name  (this has to be interactive user because script can get an access token for the current account only)
     * password - leave  `Password` field empty 
     * authentication type - set `Auth_Type` to `entraid` value
+
+# Appendix - Manual script execution
+Incase system don't have powershell installed or user dont have permisson to install on host machine executing these script
+Below batch file can be executed to gather the database level info.
+
+Step1. Create and Update CMF_MySQL_Server_Input_file.csv (For All Servers)
+"**Host_Name**","Resource_Group","**Port**","VCore","Auth_Type","**User_ID**","**Password**","**DB_Name**","Tenant","Subscription_ID","**Approval_Status**","SSL_Mode"
+Step2. Open CMD prompt with Run as Admin  
+Step3. Execute `CMF-Mysql-Manual-Windows.bat`( Windows )
+        Execute `sh ./CMF-Mysql-Manual-Linux.txt`( Linux )
