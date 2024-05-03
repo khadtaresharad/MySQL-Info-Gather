@@ -7,7 +7,7 @@ Linux RHEL v7 or later , Ubuntu v14 or later<br />
 
 **Pre-requisites**<br />
 
-Execute below prior running Powershell scripts
+Execute below prior running Powershell scripts<br />
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy bypass
 
 ***Windows***<br />
