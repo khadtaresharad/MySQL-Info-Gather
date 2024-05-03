@@ -7,6 +7,9 @@ Linux RHEL v7 or later , Ubuntu v14 or later<br />
 
 **Pre-requisites**<br />
 
+Execute below prior running Powershell scripts
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy bypass
+
 ***Windows***<br />
 Powershell -   https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4<br /> 
 MySQL Client - https://dev.mysql.com/downloads/installer/<br />
@@ -84,7 +87,7 @@ Credentials handling method depends on customer requirements and relevant `CMF_M
     * authentication type - set `Auth_Type` to `entraid` value
 
 # Appendix - Manual script execution
-Incase system don't have powershell installed or user dont have permisson to install on host machine executing these script
+Incase system don't have powershell installed or user dont have permission to install on host machine executing these script
 Below batch file can be executed to gather the database level info.
 
 Step1. Create and Update CMF_MySQL_Server_Input_file.csv (For All Servers)
