@@ -81,47 +81,9 @@ createFolder $folder\Output\
 createFolder $folder\Output\Single\
 
 
-#Check for Import-Csv module
-#Write-Host "======================================================================================="
-#Write-Host "`nChecking for Import-Csv Module"
-#if((Get-Module -ListAvailable).Name -notcontains "Import-Csv")
-#{
-#    Write-Host "Csv PS module not found.."  -BackgroundColor Red
-#    Write-Host "=======================================================================================" 
-#    $response = read-host "Do you want to continue download and install Csv PS Module? 'Y' or 'N' : "
-#
-#    if($response.ToUpper() -eq "Y")
-#    {
-#    Write-Host "Downloading Import-Csv PS Module..."
-#    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-#    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-#    try { Install-Module -Name Import-Csv} 
-#            catch {
-#
-#               Write-Host "======================================================================================="  
-#               Write-Host "Error while downloading ImportCSV package , Please make sure computer is connected to internet "  -ForegroundColor Red  
-#               Write-Host "Or "  -ForegroundColor Red 
-#               Write-Host "Please install it manually "  -ForegroundColor Red   
-#               Write-Host "======================================================================================="  
-#               Write-Host "Please see the error below & execution has been stopped          " 
-#            throw  $_.Exception.Response.StatusCode.Value__
-#            }
-#    
-#    Write-Host "Downloaded."
-#    }
-#    else
-#    {
-#        Write-Host "Csv PS module is required for the execution. Exiting..."
-#        exitCode
-#    }
-#    <#Expand-Archive "$folder\Downloads\Import-Csv.zip" "$folder\Downloads\"
-#    move "$folder\Downloads\Import-Csv-7.8.0" "C:\Program Files\WindowsPowerShell\Modules\Import-Csv"
-#    Import-Module Import-Csv#>
-#}
-
-
 # Read the input config Csv and validate
 $inputfile = $PSScriptRoot+"\Azure_Subscription.csv"
+
 Write-Host "Input file is $inputfile " -ForegroundColor Green
  Write-Host "==============================================================================================================" 
 
@@ -154,6 +116,7 @@ else
         }
 
 }    
+
  
  $ColumnList=$ConfigList | Get-Member -MemberType NoteProperty | %{"$($_.Name)"}
      if (($ColumnList.Contains("Tenant")) -and
@@ -163,18 +126,6 @@ else
         }
      else {Write-Host "There are mismatches in the Csv column . Kindly check and retrigger the automation "  -BackgroundColor Red
            exitCode}
-
-$tenant=$ConfigList[0].'Tenant'
-if ([string]::IsNullOrWhitespace($tenant)){
-Write-Host "'Tenant' is not valid in the Azure_Subscription worksheet. Kindly check and retrigger the automation  "  -BackgroundColor Red 
-exitCode
-}
-
-$Subscription=$ConfigList[0].'Subscription_ID'
-if ([string]::IsNullOrWhitespace($Subscription)){
-Write-Host "'Subscription_ID' is not valid in the Azure_Subscription worksheet. Kindly check and retrigger the automation  "  -BackgroundColor Red 
-exitCode
-}
 
 
 Unblock-File $folder/Validation_Scripts/Check_PowerShell_Version.ps1
@@ -323,17 +274,34 @@ If($Validation.Status.Contains("FAILED"))
     }
 
 
-#AZ login to corresponsing Tenant and subscription
+$tenant=$ConfigList.Tenant|Get-Unique
 
-$loginoutput=az login --tenant $tenant --only-show-errors
-if (!$loginoutput) 
+    if ([string]::IsNullOrWhitespace($tenant)){
+Write-Host "Tenant listed Azure_Subscription worksheet is not valid. Kindly check and retrigger the automation  "  -BackgroundColor Red 
+exitCode
+}
+elseif($tenant.count -gt 1)
 {
-    Write-Error "Error connecting to Tenant: $tenant and Subscription: $Subscription"
-    exitcode
+Write-Host "Azure_Subscription.csv has multiple Tenant. This script doesn't support multiple Tenant but you can add multiple Subscription. `nKindly check and retrigger the automation for each Tenant separately."  -BackgroundColor Red 
+exitCode
+
 }
 else
 {
-    $Serverdata=@()
+#AZ login to corresponsing Tenant and subscription
+$loginoutput=az login --tenant $tenant --only-show-errors
+}
+
+if (!$loginoutput) 
+{
+    Write-Error "Error connecting to Tenant: $tenant"
+    exitcode
+}
+$Subscriptions= $ConfigList.Subscription_ID|Sort-Object -Unique
+
+      foreach ($Subscription in $Subscriptions)
+  {
+      $Serverdata=@()
     $db_data=@()
     $DBList=@()
     $ServerConf=@()
@@ -348,11 +316,23 @@ else
     $PvtEnd=@()
     $dbdata=@()
 
+
+
+
+if ([string]::IsNullOrWhitespace($Subscription)){
+Write-Host "$Subscription is not valid in the Azure_Subscription worksheet. Kindly check and retrigger the automation  "  -BackgroundColor Red 
+continue
+} 
+
+
+    Write-Host "==============================================================================================================" 
+    Write-Host "Processing Subscription: $Subscription" -ForegroundColor Green
     #AZ Connect to provided subscription
-    az account set --subscription $Subscription
-     
+     az account set --subscription $Subscription
+
+
     #Server list fetch for Single Server
-    $Single_list_Out = az mysql server list | Out-File $folder\Output\Single\Single_Server_List.json 
+    $Single_list_Out = az mysql server list | Out-File $folder\Output\Single\Single_Server_List.json -Append
     
     $ser_details = az mysql server list|ConvertFrom-Json
     
@@ -374,8 +354,8 @@ else
     {
      Write-Host "There is no MySQL single server on Subscription [$Subscription] for Tenant [$tenant]" -ForegroundColor Red
      Write-host "Please check Subscription on input file: Azure_Subscription.csv" -ForegroundColor Red
-     Write-Host "=============================================================================================================="  
-     exitCode
+     #Write-Host "=============================================================================================================="  
+  
     }
   foreach ($i in $ser_details)
   {
@@ -548,18 +528,19 @@ else
       Write-Host "MySQL Single server [$ServerName] is in ""$userVisibleState"" state, Database(s) information can't be captured for [$ServerName]." -ForegroundColor Red
       }
       }
-    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Server_List.csv 
-    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\DB_Details.csv 
-    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Configuration_Data.csv 
-    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\AD_Admin.csv
-    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\FW_List.csv 
-    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Replica_List.csv 
-    $CMKey| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/CMK_List.csv
-    $MSDef| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/MSDef_List.csv
-    $SerEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/SerEnd_List.csv
-    $PvtEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/PvtEnd_List.csv
+    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Server_List.csv -Append
+    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\DB_Details.csv -Append
+    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Configuration_Data.csv -Append
+    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\AD_Admin.csv -Append
+    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\FW_List.csv -Append
+    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot\Output\Replica_List.csv -Append
+    $CMKey| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/CMK_List.csv -Append
+    $MSDef| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/MSDef_List.csv -Append
+    $SerEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/SerEnd_List.csv -Append
+    $PvtEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/PvtEnd_List.csv -Append
     if($Outfiledata -ne $null){
     $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV -NoTypeInformation $PSScriptRoot\CMF_MySQL_Server_Input_file.csv
+    }
     }
     
     Write-Host "`n=============================================================================================================="  
@@ -579,6 +560,3 @@ Get-ChildItem -Path $PSScriptRoot\Output\ -Recurse | ForEach-Object {if($filenam
  {
  Write-Host 'FILE ' CMF_MySQL_Server_Input_file.csv ' missing in the folder.' -foregroundcolor red
  }
-
-    
-}
