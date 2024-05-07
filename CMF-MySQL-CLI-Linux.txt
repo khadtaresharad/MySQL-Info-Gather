@@ -102,8 +102,7 @@ if (-not(Test-Path -Path $inputfile -PathType Leaf)) {
 else
 {
      try {
-     $inputfile  ="C:/Users/v-madagrawal/MySQL-Info-Gather/Azure_Subscription.csv"
-         $ConfigList = Import-CSV -Path $inputfile  
+             $ConfigList = Import-CSV -Path $inputfile  
          }
 
          catch {
