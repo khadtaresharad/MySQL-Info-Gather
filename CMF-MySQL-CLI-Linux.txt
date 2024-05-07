@@ -3,7 +3,7 @@
 #  Schedule       : Ad-Hoc / On-Demand
 #  Date           : 19-July-2023
 #  Author         : Rackimuthu Kandaswamy , Sireesha , ArunKumar , Saby , Lekshmy MK, Madan Agrawal
-#  Version        : 1.2
+#  Version        : 2.1
 #   
 #  INPUT          : NONE
 #  VARIABLE       : NONE
@@ -33,7 +33,7 @@
 •	-NoTypeInformation to suppress the first line from CSVs.        
 •	Skip execution for servers where server state is not "Ready" to suppress error message and to gain performace.
 •	Progress bar addition with server in progress
-
+•	added Multi-subscription support
         
 #>
 #Set-ExecutionPolicy Bypass -Scope currentuser
