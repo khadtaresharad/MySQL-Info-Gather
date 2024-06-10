@@ -33,7 +33,9 @@
 •	-NoTypeInformation to suppress the first line from CSVs.        
 •	Skip execution for servers where server state is not "Ready" to suppress error message and to gain performace.
 •	Progress bar addition with server in progress
-•	added Multi-subscription support
+•	Inlcude multiple subscriptions features
+
+
         
 #>
 #Set-ExecutionPolicy Bypass -Scope currentuser
@@ -43,12 +45,13 @@ CLS
 #---------------------------------------------------------PROGRAM BEGINS HERE----------------------------------------------------------
 
 write-host "                                                                            " -BackgroundColor DarkMagenta
-Write-Host "                   Welcome to CMF-MySQL_Info_Gathering_Automation         " -ForegroundColor white -BackgroundColor DarkMagenta
+Write-Host "                   Welcome to CMF-MySQL_Info_Gathering_Automation           " -ForegroundColor white -BackgroundColor DarkMagenta
 write-host "                     (OSS DB Migration Factory)                             " -BackgroundColor DarkMagenta
 write-host "                                                                            " -BackgroundColor DarkMagenta
 Write-Host " "
 
 $folder = $PSScriptRoot
+$mysqlpath = which mysql
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
  Write-Host "==============================================================================================================" 
 Start-Transcript -path  $folder/Logs/CMF-MySQL_Info_Gathering_Automation_Transcript_$today_date.txt  -Append
@@ -74,7 +77,13 @@ function createFolder([string]$newFolder)
     }
 }
 
-
+if ($mysqlpath -like "*/mysql*") {
+	Write-Host "MySQL exists. Continuing execution..." -ForegroundColor Green
+}
+else {
+	Write-Host "MySQL does not exists. Please install MySQL and re-execute the script" -BackgroundColor Red
+	break
+}
 
 createFolder $folder/Downloads/
 createFolder $folder/Logs/
@@ -102,7 +111,7 @@ if (-not(Test-Path -Path $inputfile -PathType Leaf)) {
 else
 {
      try {
-             $ConfigList = Import-CSV -Path $inputfile  
+         $ConfigList = Import-CSV -Path $inputfile  
          }
 
          catch {
@@ -127,7 +136,7 @@ else
 
 
 chmod +x $folder/Validation_Scripts/Check_PowerShell_Version.ps1
-chmod +x $folder/Validation_Scripts/azurecli.ps1
+chmod +x $folder/Validation_Scripts/azurecli_linux.ps1
       
 # Check PowerShell version
 $Validation=@()
@@ -141,7 +150,7 @@ $global:row=@{}
 $FWData=@()
 $ServerConfigData=@()
 $Validation+=& "$folder/Validation_Scripts/Check_PowerShell_Version.ps1"
-$Validation+=& "$folder/Validation_Scripts/azurecli.ps1"
+$Validation+=& "$folder/Validation_Scripts/azurecli_linux.ps1"
 
 Write-Host "==============================================================================================================" 
 Write-Host "Below are the Validation Results"  -ForegroundColor Green  
@@ -287,7 +296,7 @@ exitCode
 else
 {
 #AZ login to corresponsing Tenant and subscription
-$loginoutput=az login --tenant $tenant --only-show-errors
+$loginoutput=az login --tenant $tenant
 }
 if (!$loginoutput) 
 {
@@ -322,8 +331,21 @@ continue
 
     Write-Host "==============================================================================================================" 
     Write-Host "Processing Subscription: $Subscription" -ForegroundColor Green
-    #AZ Connect to provided subscription
-     az account set --subscription $Subscription
+    Write-Host "==============================================================================================================" 
+      #AZ Connect to provided subscription
+   
+         $loginoutput=az account set --subscription $Subscription 2>&1
+           $stat = $LASTEXITCODE
+
+
+If( $stat -ne 0)
+    {
+       # seems to have failed
+       #$errorMessage = $Error[0].Exception.Message
+         Write-Host "Failed to execute [az account set --subscription $Subscription]" -ForegroundColor Red
+         Write-Host "The file [$inputfile] does not have valid Subscription.`n"  -ForegroundColor Red
+        continue
+    }
      
 
     #Server list fetch for Single Server
@@ -344,11 +366,11 @@ continue
     $global:alldata=@()
     $count = $ser_details.count
     $k=1
-    Write-Host "=============================================================================================================="  
+   # Write-Host "=============================================================================================================="  
     if ($count -eq 0)
     {
      Write-Host "There is no MySQL single server on Subscription [$Subscription] for Tenant [$tenant]" -ForegroundColor Red
-     Write-host "Please check Subscription on input file: Azure_Subscription.csv" -ForegroundColor Red
+     Write-host "Please check Subscription on input file: Azure_Subscription.csv`n" -ForegroundColor Red
    
     }
   foreach ($i in $ser_details)
@@ -522,16 +544,16 @@ continue
       Write-Host "MySQL Single server [$ServerName] is in ""$userVisibleState"" state, Database(s) information can't be captured for [$ServerName]." -ForegroundColor Red
       }
       }
-    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/Server_List.csv -Append 
-    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/DB_Details.csv -Append
-    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/Configuration_Data.csv -Append
-    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/AD_Admin.csv -Append
-    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/FW_List.csv -Append
-    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/Replica_List.csv -Append
-    $CMKey| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/CMK_List.csv -Append
-    $MSDef| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/MSDef_List.csv -Append
-    $SerEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/SerEnd_List.csv -Append
-    $PvtEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/PvtEnd_List.csv -Append
+    $Serverdata| ForEach-Object {[PSCustomObject]$_}  | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/Server_List.csv -Append -Force
+    $DBList| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/DB_Details.csv -Append -Force
+    $ServerConf| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/Configuration_Data.csv -Append -Force
+    $Admin| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/AD_Admin.csv -Append -Force
+    $Firewall| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/FW_List.csv -Append -Force
+    $Replica| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/Replica_List.csv -Append -Force
+    $CMKey| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/CMK_List.csv -Append -Force
+    $MSDef| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/MSDef_List.csv -Append -Force
+    $SerEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/SerEnd_List.csv -Append -Force
+    $PvtEnd| ForEach-Object {[PSCustomObject]$_} | Export-CSV -NoTypeInformation -Path $PSScriptRoot/Output/PvtEnd_List.csv -Append -Force
     if($Outfiledata -ne $null){
     $Outfiledata | select Host_Name,Resource_Group,Port,VCore,User_ID,Password,Auth_Type,DB_Name,Tenant,Subscription_ID,Approval_Status,SSL_Mode | Export-CSV -NoTypeInformation $PSScriptRoot\CMF_MySQL_Server_Input_file.csv
     }

@@ -33,12 +33,16 @@ MySQL Client ( e.g. /usr/bin/mysql )<br />
 ## Step1. Azure CLI Info Gathering (Only for Azure Database for MySQL Single Servers)
 1.	Download the package zip file named `MySQL-Info-Gather.zip`
 2.	Extract the `unzip MySQL-Info-Gather.zip` file.
-3.	Run `rename rename.txt rename.bat` and Execute the `rename.bat` ( Windows ) 
-4.  Run `sh ./rename-linux.txt` ( Linux )
-5.	Open the Input file `Azure_Subscription.csv` and provide the Tenant ID & Subscription ID 
+3.	Run `rename rename.txt rename.bat` and Execute the `rename.bat` (Windows) 
+4.  Run `sh ./rename-linux.txt` (Linux)
+5.	Open the Input file `Azure_Subscription.csv` (Provide the Tenant ID & Subscription ID, add Multiple rows for Multiple Subscriptions)  
 6.	Execute `powershell.exe .\CMF-MySQL-CLI-Windows.ps1` (Windows)
 7.  Execute `pwsh ./CMF-MySQL-CLI-Linux.ps1` (Linux)
 8.	Once the execution completed, you can check the output & Logs folder.
+
+    Note:- Script support Multiple Subscription within single tenant. If you have multiple Tenent, follow each steps for individual Tenant.<br />
+    For any reason if you need to re-execute "CMF-MySQL-CLI-Windows.ps1" script again...
+    Rename or clear the "output" folder before each execution to prevent overwritten output.
 
 ## Step2. Update CMF_MySQL_Server_Input_file.csv (For All Servers)
 "**Host_Name**","Resource_Group","**Port**","VCore","Auth_Type","**User_ID**","**Password**","**DB_Name**","Tenant","Subscription_ID","**Approval_Status**","SSL_Mode"

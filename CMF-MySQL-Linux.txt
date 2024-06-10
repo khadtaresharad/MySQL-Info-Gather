@@ -42,9 +42,6 @@ function createFolder([string]$newFolder) {
     }
 }
 
-
-
-
 #---------------------------------------------------------PROGRAM BEGINS HERE----------------------------------------------------------
 
 
@@ -56,9 +53,17 @@ write-host "                                                                    
 Write-Host " "
 
 $folder = $PSScriptRoot
-
+$mysqlpath = which mysql
 $today_date=Get-Date -Format "MM_dd_yyyy_HH_mm"
 Start-Transcript -path  $folder/Logs/CMF-MySQL_Info_Gathering_Automation_Transcript_$today_date.txt -Append
+
+if ($mysqlpath -like "*/mysql*") {
+	Write-Host "MySQL exists. Continuing execution..." -ForegroundColor Green
+}
+else {
+	Write-Host "MySQL does not exists. Please install MySQL and re-execute the script" -BackgroundColor Red
+	break
+}
 
 $Global:project_name = ""
 

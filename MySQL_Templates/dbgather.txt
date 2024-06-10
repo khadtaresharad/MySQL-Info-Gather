@@ -213,6 +213,9 @@ Select 'DATABASE ENGINE INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
 Select 'AAD-USER INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
 select user,host,plugin from mysql.user order by 3,1;
-select * from  mysql.user where upper(plugin) like '%AAD%';
 Select 'AAD-USER INFO END' as "Query_Description",CURRENT_TIMESTAMP;
+
+Select 'AAD-PLUGIN INFO BEGIN' as "Query_Description",CURRENT_TIMESTAMP;
+select * from  mysql.user where upper(plugin) like '%AAD%';
+Select 'AAD-PLUGIN INFO END' as "Query_Description",CURRENT_TIMESTAMP;
 
